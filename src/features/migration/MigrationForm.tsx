@@ -1,5 +1,5 @@
 import { Drawer, styled } from "@mui/material"
-import { useState } from "react"
+import useParams from "src/hooks/useParams"
 import Footer from "../../components/forms/Footer"
 import Header from "../../components/forms/Header"
 import NetworkAndStorageMappingStep from "./NetworkAndStorageMappingStep"
@@ -29,16 +29,24 @@ interface MigrationFormDrawerProps {
   onClose: () => void
 }
 
+interface FormValues extends Record<string, unknown> {
+  dataCenter?: string
+}
+
+const defaultValues: FormValues = {
+  // Testing values
+  dataCenter: "PNAP BMC",
+}
+
+type Errors = { [formId: string]: string }
+
 export default function MigrationFormDrawer({
   open,
   onClose,
 }: MigrationFormDrawerProps) {
-  const [values, setValues] = useState<{ [key: string]: unknown }>({})
-  const [errors, setErrors] = useState<{ [key: string]: string }>({})
-
-  const handleOnChange = (key: string) => (value: unknown) => {
-    setValues({ ...values, [key]: value })
-  }
+  const { params, getParamsUpdater } = useParams<FormValues>(defaultValues)
+  const { params: errors, getParamsUpdater: getErrorsUpdater } =
+    useParams<Errors>({})
 
   const handleSubmit = () => {}
 
@@ -49,20 +57,20 @@ export default function MigrationFormDrawer({
         <StyledForm onSubmit={handleSubmit}>
           {/* Step 1 */}
           <SourceAndDestinationEnvStep
-            values={values}
-            onChange={handleOnChange}
+            params={params}
+            onChange={getParamsUpdater}
             errors={errors}
           />
           {/* Step 2 */}
           <VmsSelectionStep
-            values={values}
-            onChange={handleOnChange}
+            params={params}
+            onChange={getParamsUpdater}
             errors={errors}
           />
           {/* Step 3 */}
           <NetworkAndStorageMappingStep
-            values={values}
-            onChange={handleOnChange}
+            params={params}
+            onChange={getParamsUpdater}
             errors={errors}
           />
         </StyledForm>

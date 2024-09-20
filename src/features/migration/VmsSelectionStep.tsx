@@ -12,7 +12,9 @@ const FieldsContainer = styled("div")(({ theme }) => ({
   marginLeft: theme.spacing(6),
 }))
 
-const columns: GridColDef[] = [{ field: "name", headerName: "Name", flex: 2 }]
+const columns: GridColDef[] = [
+  { field: "name", headerName: "VM Name", flex: 2 },
+]
 
 const rows = [
   { id: 1, lastName: "Snow", name: "Jon", age: 35 },
@@ -29,13 +31,13 @@ const rows = [
 const paginationModel = { page: 0, pageSize: 5 }
 
 interface VmsSelectionStepProps {
-  values: { [key: string]: unknown }
+  params: { [key: string]: unknown }
   onChange: (id: string) => (value: unknown) => void
   errors: { [key: string]: string }
 }
 
 export default function VmsSelectionStep({
-  values,
+  params,
   onChange,
   errors,
 }: VmsSelectionStepProps) {

@@ -14,13 +14,13 @@ const FieldsContainer = styled("div")(({ theme }) => ({
 }))
 
 interface NetworkAndStorageMappingStepProps {
-  values: { [key: string]: string }
-  onChange: (value: string) => void
+  params: { [key: string]: unknown }
+  onChange: (key: string) => (value: string) => void
   errors: { [key: string]: string }
 }
 
 export default function NetworkAndStorageMappingStep({
-  values,
+  params,
   onChange,
   errors,
 }: NetworkAndStorageMappingStepProps) {

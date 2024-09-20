@@ -19,17 +19,16 @@ const Fields = styled("div")(() => ({
 }))
 
 interface SourceAndDestinationEnvStepProps {
-  values: { [key: string]: unknown }
+  params: { [key: string]: unknown }
   onChange: (id: string) => (value: unknown) => void
   errors: { [key: string]: string }
 }
 
 export default function SourceAndDestinationEnvStep({
-  values,
+  params,
   onChange,
   errors,
 }: SourceAndDestinationEnvStepProps) {
-  console.log("SourceAndDestinationEnvStep")
   return (
     <SourceAndDestinationStepContainer>
       <Step stepNumber="1" label="Source and Destination Environments" />
@@ -41,11 +40,11 @@ export default function SourceAndDestinationEnvStep({
         >
           <Typography variant="body1">Source VMWare</Typography>
           <TextField
-            id="vCenterLocation"
+            id="dataCenter"
             label="vCenter Server"
             variant="outlined"
-            value={values["vcenter-server"]}
-            onChange={(e) => onChange(e.target.value)}
+            value={params["vcenter-server"]}
+            onChange={(e) => onChange("dataCenter")(e.target.value)}
             error={!!errors.sourceEnv}
             required
           />
@@ -54,7 +53,7 @@ export default function SourceAndDestinationEnvStep({
               id="username"
               label="Username"
               variant="outlined"
-              value={values["username"]}
+              value={params["username"]}
               onChange={(e) => onChange(e.target.value)}
               error={!!errors.sourceEnv}
               fullWidth
@@ -64,7 +63,7 @@ export default function SourceAndDestinationEnvStep({
               id="password"
               label="Password"
               variant="outlined"
-              value={values["password"]}
+              value={params["password"]}
               onChange={(e) => onChange(e.target.value)}
               error={!!errors.sourceEnv}
               fullWidth
