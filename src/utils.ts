@@ -9,3 +9,19 @@ export const pathJoin = (...pathParts) =>
     .filter((segment) => !!segment) // Remove empty parts
     .join("/")
     .replace(duplicatedSlashesRegexp, "$1")
+
+export const debounce = (func, delay) => {
+  let timeout
+
+  const debouncedFunction = (...args) => {
+    clearTimeout(timeout)
+    timeout = setTimeout(() => func(...args), delay)
+  }
+
+  // Add a cancel method to clear the timeout
+  debouncedFunction.cancel = () => {
+    clearTimeout(timeout)
+  }
+
+  return debouncedFunction
+}

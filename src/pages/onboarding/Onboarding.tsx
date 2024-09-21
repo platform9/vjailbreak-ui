@@ -57,10 +57,9 @@ export default function Onboarding() {
 
   return (
     <div>
-      <MigrationFormDrawer
-        open={openMigrationForm}
-        onClose={() => setOpenMigrationForm(false)}
-      />
+      {openMigrationForm && (
+        <MigrationFormDrawer open onClose={() => setOpenMigrationForm(false)} />
+      )}
       <Container>
         <CircularLogoContainer>
           <img src="/logo.png" alt="vJailbreak Logo" />
