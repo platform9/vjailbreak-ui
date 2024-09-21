@@ -1,5 +1,9 @@
 import config from "app-config"
 import {
+  GetMigrationTemplatesList,
+  MigrationTemplate,
+} from "src/data/migration-templates/model"
+import {
   GetOpenstackCredsList,
   OpenstackCreds,
 } from "src/data/openstack-creds/model"
@@ -192,24 +196,9 @@ class vJailbreak extends ApiService {
     return response
   }
 
-  getMigrationTemplate = async (
-    templateName,
-    namespace = this.defaultNamespace
-  ) => {
-    const endpoint = `${this.baseEndpoint}/namespaces/${namespace}/migrationtemplates/${templateName}`
-    const response = await this.client.get({
-      endpoint,
-      options: {
-        clsName: this.getClassName(),
-        mthdName: "getMigrationTemplate",
-      },
-    })
-    return response
-  }
-
   getMigrationTemplateList = async (namespace = this.defaultNamespace) => {
     const endpoint = `${this.baseEndpoint}/namespaces/${namespace}/migrationtemplates`
-    const response = await this.client.get({
+    const response = await this.client.get<GetMigrationTemplatesList>({
       endpoint,
       options: {
         clsName: this.getClassName(),
@@ -219,9 +208,24 @@ class vJailbreak extends ApiService {
     return response
   }
 
+  getMigrationTemplate = async (
+    templateName,
+    namespace = this.defaultNamespace
+  ) => {
+    const endpoint = `${this.baseEndpoint}/namespaces/${namespace}/migrationtemplates/${templateName}`
+    const response = await this.client.get<MigrationTemplate>({
+      endpoint,
+      options: {
+        clsName: this.getClassName(),
+        mthdName: "getMigrationTemplate",
+      },
+    })
+    return response
+  }
+
   createMigrationTemplate = async (body, namespace = this.defaultNamespace) => {
     const endpoint = `${this.baseEndpoint}/namespaces/${namespace}/migrationtemplates`
-    const response = await this.client.post({
+    const response = await this.client.post<MigrationTemplate>({
       endpoint,
       body,
       options: {

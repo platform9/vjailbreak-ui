@@ -1,10 +1,13 @@
 import { Box, Drawer, styled } from "@mui/material"
 import { useCallback, useEffect, useState } from "react"
+import { createMigrationTemplate } from "src/data/migration-templates/action"
+import { MigrationTemplate } from "src/data/migration-templates/model"
 import { createOpenstackCreds } from "src/data/openstack-creds/actions"
 import { OpenstackCreds } from "src/data/openstack-creds/model"
 import { createVmwareCreds } from "src/data/vmware-creds/actions"
 import { VMwareCreds } from "src/data/vmware-creds/model"
 import useParams from "src/hooks/useParams"
+import { isNilOrEmpty } from "src/utils"
 import Footer from "../../components/forms/Footer"
 import Header from "../../components/forms/Header"
 import NetworkAndStorageMappingStep from "./NetworkAndStorageMappingStep"
@@ -58,6 +61,8 @@ export default function MigrationFormDrawer({
   const [openstackCredsObj, setOpenstackCredsObj] = useState<OpenstackCreds>(
     {} as OpenstackCreds
   )
+  const [migrationTemplateObj, setMigrationTemplateObj] =
+    useState<MigrationTemplate>({} as MigrationTemplate)
 
   const vmWareCredsValidated =
     vmWareCredsObj?.status?.vmwareValidationMessage === "Success"
@@ -77,10 +82,10 @@ export default function MigrationFormDrawer({
   )
 
   useEffect(() => {
-    if (!vmWareCredsValidated && params.vmwareCreds) {
+    if (!vmWareCredsValidated && !isNilOrEmpty(params.vmwareCreds)) {
       validateVmwareCreds(params.vmwareCreds)
     }
-  }, [params.vmwareCreds, vmWareCredsValidated])
+  }, [params.vmwareCreds, validateVmwareCreds, vmWareCredsValidated])
 
   const validateOpenstackCreds = useCallback(
     async (params) => {
@@ -92,10 +97,31 @@ export default function MigrationFormDrawer({
   )
 
   useEffect(() => {
-    if (!openstackCredsValidated && params.openstackCreds) {
+    if (!openstackCredsValidated && !isNilOrEmpty(params.openstackCreds)) {
       validateOpenstackCreds(params.openstackCreds)
     }
   }, [openstackCredsValidated, params.openstackCreds, validateOpenstackCreds])
+
+  const setUpMigrationTemplate = useCallback(async (params) => {
+    const migrationTemplateObj = await createMigrationTemplate(params)
+    setMigrationTemplateObj(migrationTemplateObj)
+  }, [])
+
+  useEffect(() => {
+    if (
+      vmWareCredsValidated &&
+      openstackCredsValidated &&
+      isNilOrEmpty(migrationTemplateObj)
+    ) {
+      setUpMigrationTemplate(params)
+    }
+  }, [
+    migrationTemplateObj,
+    openstackCredsValidated,
+    params,
+    setUpMigrationTemplate,
+    vmWareCredsValidated,
+  ])
 
   console.log("params", params)
 

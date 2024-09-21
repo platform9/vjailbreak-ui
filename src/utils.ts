@@ -1,3 +1,7 @@
+import { either, isEmpty, isNil } from "ramda"
+
+export const isNilOrEmpty = either(isNil, isEmpty)
+
 const duplicatedSlashesRegexp = new RegExp("(^\\/|[^:\\/]+\\/)\\/+", "g")
 
 // Given some path segments returns a properly formatted path similarly to Nodejs path.join()

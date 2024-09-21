@@ -10,7 +10,7 @@ export const createOpenstackCreds = async (params): Promise<OpenstackCreds> => {
     const data = await vjailbreak.createOpenstackCredentials(body)
     return data
   } catch (error) {
-    console.error("Error creating Openstack creds", error)
+    console.error("Error creating OpenstackCreds", error)
     return {} as OpenstackCreds
   }
 }
