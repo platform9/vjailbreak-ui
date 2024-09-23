@@ -17,7 +17,7 @@ class ApiClient {
   private readonly axiosInstance: AxiosInstance
   private static instance: ApiClient
   private apiServices: { [key: string]: ApiService } = {}
-  private token = null
+  private token = ""
 
   // Define API Services here
   public vjailbreak: vJailbreakService
@@ -56,6 +56,10 @@ class ApiClient {
   addApiService = <T extends ApiService>(apiClientInstance: T) => {
     this.apiServices[apiClientInstance.getClassName()] = apiClientInstance
     return apiClientInstance
+  }
+
+  setToken = (token) => {
+    this.token = token
   }
 
   getAuthHeaders = () => {

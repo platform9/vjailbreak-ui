@@ -1,4 +1,4 @@
-import { styled } from "@mui/material"
+import { FormControl, FormHelperText, styled } from "@mui/material"
 import ResourceMapping from "../../components/forms/ResourceMapping"
 import Step from "../../components/forms/Step"
 
@@ -13,39 +13,60 @@ const FieldsContainer = styled("div")(({ theme }) => ({
   gridGap: theme.spacing(2),
 }))
 
+export interface ResourceMap {
+  source: string
+  destination: string
+}
+
 interface NetworkAndStorageMappingStepProps {
-  params: { [key: string]: unknown }
-  onChange: (key: string) => (value: string) => void
-  errors: { [key: string]: string }
+  vmwareNetworks: string[]
+  vmWareStorage: string[]
+  openstackNetworks: string[]
+  openstackStorage: string[]
+  onChange: (key: string) => (value: ResourceMap[]) => void
+  networkMappingError?: string
+  storageMappingError?: string
 }
 
 export default function NetworkAndStorageMappingStep({
-  params,
+  vmwareNetworks = [],
+  vmWareStorage = [],
+  openstackNetworks = [],
+  openstackStorage = [],
   onChange,
-  errors,
+  networkMappingError,
+  storageMappingError,
 }: NetworkAndStorageMappingStepProps) {
   return (
     <VmsSelectionStepContainer>
       <Step stepNumber="3" label="Network and Storage Mapping" />
       <FieldsContainer>
-        <ResourceMapping
-          label="Map Networks"
-          sourceItems={[
-            "VMWare Network 1",
-            "VMWare Network 2",
-            "VMWare Network 3",
-          ]}
-          destinationItems={["OpenStack Network A", "OpenStack Network B"]}
-          sourceLabel="VMware Network"
-          destinationLabel="Openstack Network"
-        />
-        <ResourceMapping
-          label="Map Storage"
-          sourceItems={["Source Storage 1", "Source Storage 2"]}
-          destinationItems={["Destination Storage A", "Destination Storage B"]}
-          sourceLabel="VMWare Datastore"
-          destinationLabel="OpenStack VolumeType"
-        />
+        <FormControl error={!!networkMappingError}>
+          <ResourceMapping
+            label="Map Networks"
+            sourceItems={vmwareNetworks}
+            destinationItems={openstackNetworks}
+            sourceLabel="VMware Network"
+            destinationLabel="Openstack Network"
+            onChange={(value) => onChange("networksMapping")(value)}
+          />
+          {networkMappingError && (
+            <FormHelperText error>{networkMappingError}</FormHelperText>
+          )}
+        </FormControl>
+        <FormControl error={!!storageMappingError}>
+          <ResourceMapping
+            label="Map Storage"
+            sourceItems={vmWareStorage}
+            destinationItems={openstackStorage}
+            sourceLabel="VMWare Datastore"
+            destinationLabel="OpenStack VolumeType"
+            onChange={(value) => onChange("storageMapping")(value)}
+          />
+          {storageMappingError && (
+            <FormHelperText error>{storageMappingError}</FormHelperText>
+          )}
+        </FormControl>
       </FieldsContainer>
     </VmsSelectionStepContainer>
   )

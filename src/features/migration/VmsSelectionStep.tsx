@@ -1,6 +1,28 @@
-import { Paper, styled } from "@mui/material"
-import { DataGrid, GridColDef } from "@mui/x-data-grid"
+import { Box, FormControl, FormHelperText, Paper, styled } from "@mui/material"
+import {
+  DataGrid,
+  GridColDef,
+  GridRowSelectionModel,
+  GridToolbarQuickFilter,
+} from "@mui/x-data-grid"
+import { VmData } from "src/data/migration-templates/model"
 import Step from "../../components/forms/Step"
+
+// Custom Toolbar with just the Quick Filter
+const CustomToolbar = () => {
+  return (
+    <Box
+      sx={{
+        p: 1,
+        display: "flex",
+        justifyContent: "flex-end",
+        alignItems: "center",
+      }}
+    >
+      <GridToolbarQuickFilter />
+    </Box>
+  )
+}
 
 const VmsSelectionStepContainer = styled("div")(({ theme }) => ({
   display: "grid",
@@ -16,48 +38,47 @@ const columns: GridColDef[] = [
   { field: "name", headerName: "VM Name", flex: 2 },
 ]
 
-const rows = [
-  { id: 1, lastName: "Snow", name: "Jon", age: 35 },
-  { id: 2, lastName: "Lannister", name: "Cersei", age: 42 },
-  { id: 3, lastName: "Lannister", name: "Jaime", age: 45 },
-  { id: 4, lastName: "Stark", name: "Arya", age: 16 },
-  { id: 5, lastName: "Targaryen", name: "Daenerys", age: null },
-  { id: 6, lastName: "Melisandre", name: "jdgjjs", age: 150 },
-  { id: 7, lastName: "Clifford", name: "Ferrara", age: 44 },
-  { id: 8, lastName: "Frances", name: "Rossini", age: 36 },
-  { id: 9, lastName: "Roxie", name: "Harvey", age: 65 },
-]
-
 const paginationModel = { page: 0, pageSize: 5 }
 
 interface VmsSelectionStepProps {
-  params: { [key: string]: unknown }
+  vms: VmData[]
   onChange: (id: string) => (value: unknown) => void
-  errors: { [key: string]: string }
+  error: string
 }
 
 export default function VmsSelectionStep({
-  params,
+  vms,
   onChange,
-  errors,
+  error,
 }: VmsSelectionStepProps) {
+  const handleVmSelection = (selectedRowIds: GridRowSelectionModel) => {
+    const selectedVms = vms.filter((vm) => selectedRowIds.includes(vm.name))
+    onChange("vms")(selectedVms)
+  }
+
   return (
     <VmsSelectionStepContainer>
       <Step stepNumber="2" label="Select Virtual Machines to Migrate" />
       <FieldsContainer>
-        <Paper sx={{ height: "287px", width: "100%" }}>
-          <DataGrid
-            rows={rows}
-            columns={columns}
-            initialState={{ pagination: { paginationModel } }}
-            pageSizeOptions={[5, 10, 25]}
-            localeText={{ noRowsLabel: "No VMs discovered" }}
-            rowHeight={35}
-            checkboxSelection
-            disableColumnMenu
-            disableColumnResize
-          />
-        </Paper>
+        <FormControl error={!!error} required>
+          <Paper sx={{ width: "100%", height: 338 }}>
+            <DataGrid
+              rows={vms}
+              columns={columns}
+              initialState={{ pagination: { paginationModel } }}
+              pageSizeOptions={[5, 10, 25]}
+              localeText={{ noRowsLabel: "No VMs discovered" }}
+              rowHeight={35}
+              onRowSelectionModelChange={handleVmSelection}
+              getRowId={(row) => row.name}
+              slots={{ toolbar: CustomToolbar }}
+              checkboxSelection
+              disableColumnMenu
+              disableColumnResize
+            />
+          </Paper>
+        </FormControl>
+        {error && <FormHelperText error>{error}</FormHelperText>}
       </FieldsContainer>
     </VmsSelectionStepContainer>
   )

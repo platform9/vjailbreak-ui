@@ -1,7 +1,11 @@
 import { Box, Drawer, styled } from "@mui/material"
-import { useCallback, useEffect, useState } from "react"
-import { createMigrationTemplate } from "src/data/migration-templates/action"
-import { MigrationTemplate } from "src/data/migration-templates/model"
+import { flatten, uniq } from "ramda"
+import { useCallback, useEffect, useMemo, useState } from "react"
+import {
+  createMigrationTemplate,
+  getMigrationTemplate,
+} from "src/data/migration-templates/action"
+import { MigrationTemplate, VmData } from "src/data/migration-templates/model"
 import { createOpenstackCreds } from "src/data/openstack-creds/actions"
 import { OpenstackCreds } from "src/data/openstack-creds/model"
 import { createVmwareCreds } from "src/data/vmware-creds/actions"
@@ -35,14 +39,12 @@ interface MigrationFormDrawerProps {
 interface FormValues extends Record<string, unknown> {
   vmwareCreds?: VMwareCreds
   openstackCreds?: OpenstackCreds
+  vms?: VmData[]
+  networksMapping?: { source: string; destination: string }[]
+  storageMapping?: { source: string; destination: string }[]
 }
 
-const defaultValues: Partial<FormValues> = {
-  // Testing values
-  // vmwareCreds: {
-  //   datacenter: "PNAP BMC",
-  // },
-}
+const defaultValues: Partial<FormValues> = {}
 
 type Errors = { [formId: string]: string }
 
@@ -63,6 +65,8 @@ export default function MigrationFormDrawer({
   )
   const [migrationTemplateObj, setMigrationTemplateObj] =
     useState<MigrationTemplate>({} as MigrationTemplate)
+
+  const [vmsDiscovered, setVmsDiscovered] = useState<VmData[]>([])
 
   const vmWareCredsValidated =
     vmWareCredsObj?.status?.vmwareValidationMessage === "Success"
@@ -123,7 +127,62 @@ export default function MigrationFormDrawer({
     vmWareCredsValidated,
   ])
 
+  const getUpdatedMigrationTemplate = useCallback(async () => {
+    console.log("getUpdatedMigrationTemplate")
+    if (!isNilOrEmpty(migrationTemplateObj)) return
+    // const updatedMigrationTemplate = await getMigrationTemplate({
+    //   templateName: migrationTemplateObj.metadata.name,
+    // })
+    const updatedMigrationTemplate = await getMigrationTemplate({
+      templateName: "migrationtemplate",
+    })
+    setMigrationTemplateObj(updatedMigrationTemplate)
+    const vmsList = updatedMigrationTemplate?.status?.vmware
+    setVmsDiscovered(vmsList)
+  }, [migrationTemplateObj])
+
+  useEffect(() => {
+    getUpdatedMigrationTemplate()
+    // let intervalId: NodeJS.Timeout | null = null
+
+    // if (
+    //   !isNil(migrationTemplateObj) &&
+    //   isNilOrEmpty(migrationTemplateObj?.status)
+    // ) {
+    //   intervalId = setInterval(() => {
+    //     getUpdatedMigrationTemplate()
+    //   }, 10000) // 10 seconds
+    // }
+
+    // return () => {
+    //   if (intervalId) {
+    //     clearInterval(intervalId)
+    //   }
+    // }
+  }, [migrationTemplateObj, getUpdatedMigrationTemplate])
+
+  useEffect(() => {
+    // if (
+    //   !isNil(migrationTemplateObj) &&
+    //   !isNilOrEmpty(migrationTemplateObj?.status)
+    // ) {
+    //   getUpdatedMigrationTemplate()
+    // }
+    if (isNilOrEmpty(migrationTemplateObj)) return
+    getUpdatedMigrationTemplate()
+  }, [getUpdatedMigrationTemplate, migrationTemplateObj])
+
   console.log("params", params)
+
+  const availableVmwareNetworks = useMemo(() => {
+    if (params.vms === undefined) return []
+    return uniq(flatten(params.vms.map((vm) => vm.networks || [])))
+  }, [params.vms])
+
+  const availableVmwareDatastores = useMemo(() => {
+    if (params.vms === undefined) return []
+    return uniq(flatten(params.vms.map((vm) => vm.datastores || [])))
+  }, [params.vms])
 
   return (
     <StyledDrawer
@@ -148,15 +207,23 @@ export default function MigrationFormDrawer({
           />
           {/* Step 2 */}
           <VmsSelectionStep
-            params={params}
+            vms={vmsDiscovered}
             onChange={getParamsUpdater}
-            errors={errors}
+            error={errors["vms"]}
           />
           {/* Step 3 */}
           <NetworkAndStorageMappingStep
-            params={params}
+            vmwareNetworks={availableVmwareNetworks}
+            vmWareStorage={availableVmwareDatastores}
+            openstackNetworks={
+              migrationTemplateObj?.status?.openstack?.networks
+            }
+            openstackStorage={
+              migrationTemplateObj?.status?.openstack?.volumeTypes
+            }
             onChange={getParamsUpdater}
-            errors={errors}
+            networkMappingError={errors["networksMapping"]}
+            storageMappingError={errors["storageMapping"]}
           />
         </Box>
       </DrawerContent>

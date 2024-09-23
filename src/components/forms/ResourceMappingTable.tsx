@@ -10,16 +10,16 @@ import {
   TableRow,
 } from "@mui/material"
 
-export interface ResourceMapping {
-  sourceItem: string
-  destinationItem: string
+interface ResourceMap {
+  source: string
+  destination: string
 }
 
 interface ResourceMappingTableProps {
   sourceLabel: string
   destinationLabel: string
-  mappings: ResourceMapping[]
-  onDeleteRow: (mapping: ResourceMapping) => void
+  mappings: ResourceMap[]
+  onDeleteRow: (mapping: ResourceMap) => void
   tableWidth?: string
 }
 
@@ -43,8 +43,8 @@ export default function ResourceMappingTable({
         <TableBody>
           {mappings.map((mapping, index) => (
             <TableRow key={index}>
-              <TableCell>{mapping.sourceItem}</TableCell>
-              <TableCell>{mapping.destinationItem}</TableCell>
+              <TableCell>{mapping.source}</TableCell>
+              <TableCell>{mapping.destination}</TableCell>
               <TableCell align="right">
                 <IconButton size="small" onClick={() => onDeleteRow(mapping)}>
                   <DeleteIcon />

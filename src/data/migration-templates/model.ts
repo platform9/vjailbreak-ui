@@ -2,7 +2,7 @@ export interface GetMigrationTemplatesList {
   apiVersion: string
   items: MigrationTemplate[]
   kind: string
-  metadata: GetMigrationTemplatesListMetadata
+  metadata: GetMigrationTemplatesMetadata
 }
 
 export interface MigrationTemplate {
@@ -10,6 +10,7 @@ export interface MigrationTemplate {
   kind: string
   metadata: MigrationTemplateMetadata
   spec: MigrationTemplateSpec
+  status: MigrationTemplateStatus
 }
 
 export interface MigrationTemplateMetadata {
@@ -33,12 +34,14 @@ export interface ManagedField {
   fieldsV1: FieldsV1
   manager: string
   operation: string
-  time: Date
+  time?: Date
+  subresource?: string
 }
 
 export interface FieldsV1 {
-  "f:metadata": FMetadata
-  "f:spec": FSpec
+  "f:metadata"?: FMetadata
+  "f:spec"?: FSpec
+  "f:status"?: FStatus
 }
 
 export interface FMetadata {
@@ -46,29 +49,37 @@ export interface FMetadata {
 }
 
 export interface FAnnotations {
-  ".": Empty
-  "f:kubectl.kubernetes.io/last-applied-configuration": Empty
+  "f:kubectl.kubernetes.io/last-applied-configuration": FNetworkMapping
 }
 
-export type Empty = object
+export type FNetworkMapping = object
 
 export interface FSpec {
-  ".": Empty
   "f:destination": FDestination
-  "f:networkMapping": Empty
+  "f:networkMapping": FNetworkMapping
   "f:source": FSource
-  "f:storageMapping": Empty
+  "f:storageMapping": FNetworkMapping
 }
 
 export interface FDestination {
-  ".": Empty
-  "f:openstackRef": Empty
+  "f:openstackRef": FNetworkMapping
 }
 
 export interface FSource {
-  ".": Empty
-  "f:datacenter": Empty
-  "f:vmwareRef": Empty
+  "f:datacenter": FNetworkMapping
+  "f:vmwareRef": FNetworkMapping
+}
+
+export interface FStatus {
+  ".": FNetworkMapping
+  "f:openstack": FOpenstack
+  "f:vmware": FNetworkMapping
+}
+
+export interface FOpenstack {
+  ".": FNetworkMapping
+  "f:networks": FNetworkMapping
+  "f:volumeTypes": FNetworkMapping
 }
 
 export interface MigrationTemplateSpec {
@@ -87,7 +98,23 @@ export interface Source {
   vmwareRef: string
 }
 
-export interface GetMigrationTemplatesListMetadata {
+export interface MigrationTemplateStatus {
+  openstack: Openstack
+  vmware: VmData[]
+}
+
+export interface Openstack {
+  networks: string[]
+  volumeTypes: string[]
+}
+
+export interface VmData {
+  datastores: string[]
+  name: string
+  networks?: string[]
+}
+
+export interface GetMigrationTemplatesMetadata {
   continue: string
   resourceVersion: string
 }
