@@ -31,3 +31,22 @@ export const createMigrationTemplate = async (
     return {} as MigrationTemplate
   }
 }
+
+export const updateMigrationTemplate = async (
+  templateName: string,
+  updatedParams = {}
+): Promise<MigrationTemplate> => {
+  try {
+    const data = await vjailbreak.updateMigrationTemplate(
+      templateName,
+      updatedParams
+    )
+    return data
+  } catch (error) {
+    console.error("Error updating MigrationTemplate", {
+      error,
+      params: updatedParams,
+    })
+    return {} as MigrationTemplate
+  }
+}

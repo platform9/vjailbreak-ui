@@ -16,7 +16,7 @@ const FieldsContainer = styled("div")(({ theme }) => ({
 
 export interface ResourceMap {
   source: string
-  destination: string
+  target: string
 }
 
 interface NetworkAndStorageMappingStepProps {
@@ -49,7 +49,7 @@ export default function NetworkAndStorageMappingStep({
       (params.networkMappings || []).filter(
         (mapping) =>
           vmwareNetworks.includes(mapping.source) &&
-          openstackNetworks.includes(mapping.destination)
+          openstackNetworks.includes(mapping.target)
       ),
     [params.networkMappings, vmwareNetworks, openstackNetworks]
   )
@@ -59,7 +59,7 @@ export default function NetworkAndStorageMappingStep({
       (params.storageMappings || []).filter(
         (mapping) =>
           vmWareStorage.includes(mapping.source) &&
-          openstackStorage.includes(mapping.destination)
+          openstackStorage.includes(mapping.target)
       ),
     [params.storageMappings, vmWareStorage, openstackStorage]
   )
@@ -84,9 +84,9 @@ export default function NetworkAndStorageMappingStep({
           <ResourceMapping
             label="Map Networks"
             sourceItems={vmwareNetworks}
-            destinationItems={openstackNetworks}
+            targetItems={openstackNetworks}
             sourceLabel="VMware Network"
-            destinationLabel="Openstack Network"
+            targetLabel="Openstack Network"
             values={params.networkMappings || []}
             onChange={(value) => onChange("networkMappings")(value)}
           />
@@ -98,9 +98,9 @@ export default function NetworkAndStorageMappingStep({
           <ResourceMapping
             label="Map Storage"
             sourceItems={vmWareStorage}
-            destinationItems={openstackStorage}
+            targetItems={openstackStorage}
             sourceLabel="VMWare Datastore"
-            destinationLabel="OpenStack VolumeType"
+            targetLabel="OpenStack VolumeType"
             values={params.storageMappings || []}
             onChange={(value) => onChange("storageMappings")(value)}
           />

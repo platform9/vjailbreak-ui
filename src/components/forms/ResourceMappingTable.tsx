@@ -12,12 +12,12 @@ import {
 
 interface ResourceMap {
   source: string
-  destination: string
+  target: string
 }
 
 interface ResourceMappingTableProps {
   sourceLabel: string
-  destinationLabel: string
+  targetLabel: string
   mappings: ResourceMap[]
   onDeleteRow: (mapping: ResourceMap) => void
   tableWidth?: string
@@ -25,7 +25,7 @@ interface ResourceMappingTableProps {
 
 export default function ResourceMappingTable({
   sourceLabel,
-  destinationLabel,
+  targetLabel,
   mappings,
   onDeleteRow,
   tableWidth = "600px",
@@ -36,7 +36,7 @@ export default function ResourceMappingTable({
         <TableHead>
           <TableRow>
             <TableCell>{sourceLabel}</TableCell>
-            <TableCell>{destinationLabel}</TableCell>
+            <TableCell>{targetLabel}</TableCell>
             <TableCell align="right"></TableCell>
           </TableRow>
         </TableHead>
@@ -44,7 +44,7 @@ export default function ResourceMappingTable({
           {mappings.map((mapping, index) => (
             <TableRow key={index}>
               <TableCell>{mapping.source}</TableCell>
-              <TableCell>{mapping.destination}</TableCell>
+              <TableCell>{mapping.target}</TableCell>
               <TableCell align="right">
                 <IconButton size="small" onClick={() => onDeleteRow(mapping)}>
                   <DeleteIcon />

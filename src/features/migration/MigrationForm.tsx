@@ -1,16 +1,20 @@
 import { Box, Drawer, styled } from "@mui/material"
 import { flatten, uniq } from "ramda"
 import { useEffect, useMemo, useState } from "react"
+import { createMigrationPlan } from "src/data/migration-plan/actions"
 import {
   createMigrationTemplate,
   getMigrationTemplate,
+  updateMigrationTemplate,
 } from "src/data/migration-templates/action"
 import { MigrationTemplate, VmData } from "src/data/migration-templates/model"
+import { createNetworkMapping } from "src/data/network-mappings/actions"
 import {
   createOpenstackCreds,
   getOpenstackCreds,
 } from "src/data/openstack-creds/actions"
 import { OpenstackCreds } from "src/data/openstack-creds/model"
+import { createStorageMapping } from "src/data/storage-mappings/actions"
 import {
   createVmwareCreds,
   getVmwareCreds,
@@ -52,8 +56,8 @@ interface FormValues extends Record<string, unknown> {
   }
   openstackCreds?: OpenstackCreds
   vms?: VmData[]
-  networkMappings?: { source: string; destination: string }[]
-  storageMappings?: { source: string; destination: string }[]
+  networkMappings?: { source: string; target: string }[]
+  storageMappings?: { source: string; target: string }[]
 }
 
 const defaultValues: Partial<FormValues> = {}
@@ -255,7 +259,41 @@ export default function MigrationFormDrawer({
     return uniq(flatten(params.vms.map((vm) => vm.datastores || [])))
   }, [params.vms])
 
-  const handleSubmit = () => {}
+  const handleSubmit = async () => {
+    // Create NetworkMapping Resource
+    const networkMappingsResource = await createNetworkMapping({
+      networkMappings: params.networkMappings,
+    })
+
+    // Create StorageMapping Resource
+    const storageMappingsResource = await createStorageMapping({
+      storageMappings: params.storageMappings,
+    })
+
+    // Update MigrationTemplate with NetworkMapping and StorageMapping resource names
+    const templateName = migrationTemplateResource?.metadata?.name
+    const updatedMigrationTemplateResource = await updateMigrationTemplate(
+      templateName,
+      {
+        metadata: {
+          networkMapping: networkMappingsResource.metadata.name,
+          storageMapping: storageMappingsResource.metadata.name,
+        },
+      }
+    )
+
+    // Create MigrationPlan Resource
+    const vmsToMigrate = (params.vms || []).map((vm) => vm.name)
+    const migrationPlanResource = await createMigrationPlan({
+      migrationTemplateName: updatedMigrationTemplateResource?.metadata?.name,
+      virtualmachines: vmsToMigrate,
+    })
+
+    if (!isNilOrEmpty(migrationPlanResource)) {
+      // TODO: Route to list page
+      onClose()
+    }
+  }
 
   return (
     <StyledDrawer

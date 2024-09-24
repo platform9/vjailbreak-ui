@@ -14,15 +14,15 @@ import ResourceMappingTable from "./ResourceMappingTable"
 
 export interface ResourceMap {
   source: string
-  destination: string
+  target: string
 }
 
 interface ResourceMappingProps {
   label?: string
   sourceItems: string[]
-  destinationItems: string[]
+  targetItems: string[]
   sourceLabel: string // Label for the source dropdown
-  destinationLabel: string // Label for the destination dropdown
+  targetLabel: string // Label for the target dropdown
   values: ResourceMap[]
   onChange: (mappings: ResourceMap[]) => void
   error?: string
@@ -31,47 +31,47 @@ interface ResourceMappingProps {
 export default function ResourceMapping({
   label,
   sourceItems,
-  destinationItems,
+  targetItems,
   sourceLabel,
-  destinationLabel,
+  targetLabel,
   values = [],
   onChange,
   error,
 }: ResourceMappingProps) {
   const [selectedSourceItem, setSelectedSourceItem] = useState("")
-  const [selectedDestinationItem, setSelectedDestinationItem] = useState("")
+  const [selectedTargetItem, setSelectedTargetItem] = useState("")
 
   const handleAddMapping = () => {
-    if (selectedSourceItem && selectedDestinationItem) {
+    if (selectedSourceItem && selectedTargetItem) {
       const updatedMappings = [
         ...values,
         {
           source: selectedSourceItem,
-          destination: selectedDestinationItem,
+          target: selectedTargetItem,
         },
       ]
 
       onChange(updatedMappings)
       setSelectedSourceItem("")
-      setSelectedDestinationItem("")
+      setSelectedTargetItem("")
     }
   }
 
   const handleDeleteMapping = (mapping: ResourceMap) => {
     const updatedMappings = values.filter(
-      ({ source, destination }) =>
-        mapping.source !== source || mapping.destination !== destination
+      ({ source, target }) =>
+        mapping.source !== source || mapping.target !== target
     )
 
     onChange(updatedMappings)
   }
 
-  // Filter out already mapped source and destination items
+  // Filter out already mapped source and target items
   const availableSourceItems = sourceItems.filter(
     (item) => !values.some((mapping) => mapping.source === item)
   )
-  const availableDestinationItems = destinationItems.filter(
-    (item) => !values.some((mapping) => mapping.destination === item)
+  const availableTargetItems = targetItems.filter(
+    (item) => !values.some((mapping) => mapping.target === item)
   )
 
   return (
@@ -80,7 +80,7 @@ export default function ResourceMapping({
       {values.length > 0 && (
         <ResourceMappingTable
           sourceLabel={sourceLabel}
-          destinationLabel={destinationLabel}
+          targetLabel={targetLabel}
           mappings={values}
           onDeleteRow={handleDeleteMapping}
         />
@@ -116,18 +116,16 @@ export default function ResourceMapping({
         <FormControl
           fullWidth
           size="small"
-          disabled={availableDestinationItems.length === 0}
+          disabled={availableTargetItems.length === 0}
         >
-          <InputLabel id="destination-item-label">
-            {destinationLabel}
-          </InputLabel>
+          <InputLabel id="target-item-label">{targetLabel}</InputLabel>
           <Select
-            labelId="destination-item-label"
-            value={selectedDestinationItem}
-            onChange={(e) => setSelectedDestinationItem(e.target.value)}
-            label={destinationLabel}
+            labelId="target-item-label"
+            value={selectedTargetItem}
+            onChange={(e) => setSelectedTargetItem(e.target.value)}
+            label={targetLabel}
           >
-            {availableDestinationItems.map((item) => (
+            {availableTargetItems.map((item) => (
               <MenuItem key={item} value={item}>
                 {item}
               </MenuItem>
@@ -138,7 +136,7 @@ export default function ResourceMapping({
           variant="contained"
           color="primary"
           onClick={handleAddMapping}
-          disabled={!selectedSourceItem || !selectedDestinationItem}
+          disabled={!selectedSourceItem || !selectedTargetItem}
           startIcon={<AddIcon />}
         >
           Add
