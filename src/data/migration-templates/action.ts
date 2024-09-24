@@ -4,14 +4,17 @@ import { MigrationTemplate } from "./model"
 
 const { vjailbreak } = ApiClient.getInstance()
 
-export const getMigrationTemplate = async (params: {
+export const getMigrationTemplate = async (
   templateName: string
-}): Promise<MigrationTemplate> => {
+): Promise<MigrationTemplate> => {
   try {
-    const data = await vjailbreak.getMigrationTemplate(params.templateName)
+    const data = await vjailbreak.getMigrationTemplate(templateName)
     return data
   } catch (error) {
-    console.error(`Error getting MigrationTemplate`, { error, params })
+    console.error(`Error getting MigrationTemplate`, {
+      error,
+      params: { templateName },
+    })
     return {} as MigrationTemplate
   }
 }

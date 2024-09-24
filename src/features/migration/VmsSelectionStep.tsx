@@ -47,7 +47,7 @@ interface VmsSelectionStepProps {
 }
 
 export default function VmsSelectionStep({
-  vms,
+  vms = [],
   onChange,
   error,
 }: VmsSelectionStepProps) {

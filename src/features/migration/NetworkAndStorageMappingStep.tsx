@@ -23,6 +23,10 @@ interface NetworkAndStorageMappingStepProps {
   vmWareStorage: string[]
   openstackNetworks: string[]
   openstackStorage: string[]
+  params: {
+    networkMappings?: ResourceMap[]
+    storageMappings?: ResourceMap[]
+  }
   onChange: (key: string) => (value: ResourceMap[]) => void
   networkMappingError?: string
   storageMappingError?: string
@@ -33,6 +37,7 @@ export default function NetworkAndStorageMappingStep({
   vmWareStorage = [],
   openstackNetworks = [],
   openstackStorage = [],
+  params,
   onChange,
   networkMappingError,
   storageMappingError,
@@ -48,7 +53,8 @@ export default function NetworkAndStorageMappingStep({
             destinationItems={openstackNetworks}
             sourceLabel="VMware Network"
             destinationLabel="Openstack Network"
-            onChange={(value) => onChange("networksMapping")(value)}
+            values={params.networkMappings || []}
+            onChange={(value) => onChange("networkMappings")(value)}
           />
           {networkMappingError && (
             <FormHelperText error>{networkMappingError}</FormHelperText>
@@ -61,7 +67,8 @@ export default function NetworkAndStorageMappingStep({
             destinationItems={openstackStorage}
             sourceLabel="VMWare Datastore"
             destinationLabel="OpenStack VolumeType"
-            onChange={(value) => onChange("storageMapping")(value)}
+            values={params.storageMappings || []}
+            onChange={(value) => onChange("storageMappings")(value)}
           />
           {storageMappingError && (
             <FormHelperText error>{storageMappingError}</FormHelperText>

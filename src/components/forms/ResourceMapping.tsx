@@ -12,19 +12,20 @@ import {
 import { useState } from "react"
 import ResourceMappingTable from "./ResourceMappingTable"
 
+export interface ResourceMap {
+  source: string
+  destination: string
+}
+
 interface ResourceMappingProps {
   label?: string
   sourceItems: string[]
   destinationItems: string[]
   sourceLabel: string // Label for the source dropdown
   destinationLabel: string // Label for the destination dropdown
+  values: ResourceMap[]
   onChange: (mappings: ResourceMap[]) => void
   error?: string
-}
-
-export interface ResourceMap {
-  source: string
-  destination: string
 }
 
 export default function ResourceMapping({
@@ -33,23 +34,23 @@ export default function ResourceMapping({
   destinationItems,
   sourceLabel,
   destinationLabel,
+  values = [],
   onChange,
   error,
 }: ResourceMappingProps) {
-  const [mappings, setMappings] = useState<ResourceMap[]>([])
   const [selectedSourceItem, setSelectedSourceItem] = useState("")
   const [selectedDestinationItem, setSelectedDestinationItem] = useState("")
 
   const handleAddMapping = () => {
     if (selectedSourceItem && selectedDestinationItem) {
       const updatedMappings = [
-        ...mappings,
+        ...values,
         {
           source: selectedSourceItem,
           destination: selectedDestinationItem,
         },
       ]
-      setMappings(updatedMappings)
+
       onChange(updatedMappings)
       setSelectedSourceItem("")
       setSelectedDestinationItem("")
@@ -57,30 +58,30 @@ export default function ResourceMapping({
   }
 
   const handleDeleteMapping = (mapping: ResourceMap) => {
-    const updatedMappings = mappings.filter(
+    const updatedMappings = values.filter(
       ({ source, destination }) =>
         mapping.source !== source || mapping.destination !== destination
     )
-    setMappings(updatedMappings)
+
     onChange(updatedMappings)
   }
 
   // Filter out already mapped source and destination items
   const availableSourceItems = sourceItems.filter(
-    (item) => !mappings.some((mapping) => mapping.source === item)
+    (item) => !values.some((mapping) => mapping.source === item)
   )
   const availableDestinationItems = destinationItems.filter(
-    (item) => !mappings.some((mapping) => mapping.destination === item)
+    (item) => !values.some((mapping) => mapping.destination === item)
   )
 
   return (
     <div>
       {label && <Typography variant="body1">{label}</Typography>}
-      {mappings.length > 0 && (
+      {values.length > 0 && (
         <ResourceMappingTable
           sourceLabel={sourceLabel}
           destinationLabel={destinationLabel}
-          mappings={mappings}
+          mappings={values}
           onDeleteRow={handleDeleteMapping}
         />
       )}

@@ -79,5 +79,5 @@ export interface GetOpenstackCredsListMetadata {
 
 export interface OpenstackCredsStatus {
   openstackValidationMessage: string
-  openstackValidatedStatus: string
+  openstackValidationStatus: string
 }

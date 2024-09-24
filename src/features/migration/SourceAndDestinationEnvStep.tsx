@@ -66,7 +66,7 @@ export default function SourceAndDestinationEnvStep({
   const debouncedOnChange = useCallback(
     debounce((creds) => {
       onChange("vmwareCreds")(creds) // Pass the validated creds to the parent component
-    }, 1000 * 5), // Debounce for 5 seconds
+    }, 1000 * 2), // Debounce for 3 seconds
     [onChange]
   )
 
@@ -102,7 +102,7 @@ export default function SourceAndDestinationEnvStep({
               id="datacenter"
               label="vCenter Server"
               variant="outlined"
-              value={params["vcenter-server"]}
+              value={params["datacenter"]}
               onChange={(e) =>
                 handleVmwareCredsChange({ datacenter: e.target.value })
               }

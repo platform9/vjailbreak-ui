@@ -1,11 +1,12 @@
 import config from "app-config"
 import { omit } from "ramda"
-import {
-  GetMigrationTemplatesList,
-  MigrationTemplate,
-} from "src/data/migration-templates/model"
+import { GetMigrationTemplatesList } from "src/data/migration-templates/model"
 import { GetOpenstackCredsList } from "src/data/openstack-creds/model"
-import { getOpenstackCred, getVmwareCred } from "src/data/testData"
+import {
+  getMigrationTemplate,
+  getOpenstackCred,
+  getVmwareCred,
+} from "src/data/testData"
 import { GetVMWareCredsList } from "src/data/vmware-creds/model"
 import ApiService from "./ApiService"
 
@@ -45,7 +46,6 @@ class vJailbreak extends ApiService {
     const endpoint = `${this.baseEndpoint}/namespaces/${namespace}/openstackcreds/${openstackCredsName}`
     // Test
     const data = getOpenstackCred(true)
-    console.log("hello")
     return data
     // const response = await this.client.get<OpenstackCreds>({
     //   endpoint,
@@ -96,7 +96,7 @@ class vJailbreak extends ApiService {
   ) => {
     const endpoint = `${this.baseEndpoint}/namespaces/${namespace}/vmwarecreds/${vmwareCredsName}`
     // Test
-    const data = getVmwareCred(false)
+    const data = getVmwareCred(true)
     return data
     // const response = await this.client.get<VMwareCreds>({
     //   endpoint,
@@ -224,28 +224,34 @@ class vJailbreak extends ApiService {
     templateName,
     namespace = this.defaultNamespace
   ) => {
-    const endpoint = `${this.baseEndpoint}/namespaces/${namespace}/migrationtemplates/${templateName}`
-    const response = await this.client.get<MigrationTemplate>({
-      endpoint,
-      options: {
-        clsName: this.getClassName(),
-        mthdName: "getMigrationTemplate",
-      },
-    })
-    return response
+    // Test
+    const data = getMigrationTemplate()
+    return data
+    // const endpoint = `${this.baseEndpoint}/namespaces/${namespace}/migrationtemplates/${templateName}`
+    // const response = await this.client.get<MigrationTemplate>({
+    //   endpoint,
+    //   options: {
+    //     clsName: this.getClassName(),
+    //     mthdName: "getMigrationTemplate",
+    //   },
+    // })
+    // return response
   }
 
   createMigrationTemplate = async (body, namespace = this.defaultNamespace) => {
-    const endpoint = `${this.baseEndpoint}/namespaces/${namespace}/migrationtemplates`
-    const response = await this.client.post<MigrationTemplate>({
-      endpoint,
-      body,
-      options: {
-        clsName: this.getClassName(),
-        mthdName: "createMigrationTemplate",
-      },
-    })
-    return response
+    // Test
+    const data = getMigrationTemplate()
+    return omit(["status"], data)
+    // const endpoint = `${this.baseEndpoint}/namespaces/${namespace}/migrationtemplates`
+    // const response = await this.client.post<MigrationTemplate>({
+    //   endpoint,
+    //   body,
+    //   options: {
+    //     clsName: this.getClassName(),
+    //     mthdName: "createMigrationTemplate",
+    //   },
+    // })
+    // return response
   }
 
   getMigrationPlan = async (planName, namespace = this.defaultNamespace) => {
