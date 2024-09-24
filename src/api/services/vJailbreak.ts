@@ -1,13 +1,12 @@
 import config from "app-config"
+import { omit } from "ramda"
 import {
   GetMigrationTemplatesList,
   MigrationTemplate,
 } from "src/data/migration-templates/model"
-import {
-  GetOpenstackCredsList,
-  OpenstackCreds,
-} from "src/data/openstack-creds/model"
-import { GetVMWareCredsList, VMwareCreds } from "src/data/vmware-creds/model"
+import { GetOpenstackCredsList } from "src/data/openstack-creds/model"
+import { getOpenstackCred, getVmwareCred } from "src/data/testData"
+import { GetVMWareCredsList } from "src/data/vmware-creds/model"
 import ApiService from "./ApiService"
 
 class vJailbreak extends ApiService {
@@ -44,14 +43,18 @@ class vJailbreak extends ApiService {
     namespace = this.defaultNamespace
   ) => {
     const endpoint = `${this.baseEndpoint}/namespaces/${namespace}/openstackcreds/${openstackCredsName}`
-    const response = await this.client.get<OpenstackCreds>({
-      endpoint,
-      options: {
-        clsName: this.getClassName(),
-        mthdName: "getOpenstackCredentials",
-      },
-    })
-    return response
+    // Test
+    const data = getOpenstackCred(true)
+    console.log("hello")
+    return data
+    // const response = await this.client.get<OpenstackCreds>({
+    //   endpoint,
+    //   options: {
+    //     clsName: this.getClassName(),
+    //     mthdName: "getOpenstackCredentials",
+    //   },
+    // })
+    // return response
   }
 
   createOpenstackCredentials = async (
@@ -59,15 +62,18 @@ class vJailbreak extends ApiService {
     namespace = this.defaultNamespace
   ) => {
     const endpoint = `${this.baseEndpoint}/namespaces/${namespace}/openstackcreds`
-    const response = await this.client.post<OpenstackCreds>({
-      endpoint,
-      body,
-      options: {
-        clsName: this.getClassName(),
-        mthdName: "createOpenstackCredentials",
-      },
-    })
-    return response
+    // Test
+    const data = getOpenstackCred(true)
+    return omit(["status"], data)
+    // const response = await this.client.post<OpenstackCreds>({
+    //   endpoint,
+    //   body,
+    //   options: {
+    //     clsName: this.getClassName(),
+    //     mthdName: "createOpenstackCredentials",
+    //   },
+    // })
+    // return response
   }
 
   getVmwareCredentialsList = async (namespace = this.defaultNamespace) => {
@@ -89,27 +95,33 @@ class vJailbreak extends ApiService {
     namespace = this.defaultNamespace
   ) => {
     const endpoint = `${this.baseEndpoint}/namespaces/${namespace}/vmwarecreds/${vmwareCredsName}`
-    const response = await this.client.get<VMwareCreds>({
-      endpoint,
-      options: {
-        clsName: this.getClassName(),
-        mthdName: "getVmwareCredentials",
-      },
-    })
-    return response
+    // Test
+    const data = getVmwareCred(false)
+    return data
+    // const response = await this.client.get<VMwareCreds>({
+    //   endpoint,
+    //   options: {
+    //     clsName: this.getClassName(),
+    //     mthdName: "getVmwareCredentials",
+    //   },
+    // })
+    // return response
   }
 
   createVmwareCredentials = async (body, namespace = this.defaultNamespace) => {
     const endpoint = `${this.baseEndpoint}/namespaces/${namespace}/vmwarecreds`
-    const response = await this.client.post<VMwareCreds>({
-      endpoint,
-      body,
-      options: {
-        clsName: this.getClassName(),
-        mthdName: "createVmwareCredentials",
-      },
-    })
-    return response
+    // Test
+    const data = getVmwareCred(true)
+    return omit(["status"], data)
+    // const response = await this.client.post<VMwareCreds>({
+    //   endpoint,
+    //   body,
+    //   options: {
+    //     clsName: this.getClassName(),
+    //     mthdName: "createVmwareCredentials",
+    //   },
+    // })
+    // return response
   }
 
   getNetworkMapping = async (

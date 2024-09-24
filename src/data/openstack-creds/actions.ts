@@ -14,3 +14,15 @@ export const createOpenstackCreds = async (params): Promise<OpenstackCreds> => {
     return {} as OpenstackCreds
   }
 }
+
+export const getOpenstackCreds = async (
+  name: string
+): Promise<OpenstackCreds> => {
+  try {
+    const data = await vjailbreak.getOpenstackCredentials(name)
+    return data
+  } catch (error) {
+    console.error("Error getting OpenstackCreds", error)
+    return {} as OpenstackCreds
+  }
+}

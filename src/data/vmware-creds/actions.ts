@@ -14,3 +14,13 @@ export const createVmwareCreds = async (params): Promise<VMwareCreds> => {
     return {} as VMwareCreds
   }
 }
+
+export const getVmwareCreds = async (name: string): Promise<VMwareCreds> => {
+  try {
+    const data = await vjailbreak.getVmwareCredentials(name)
+    return data
+  } catch (error) {
+    console.error("Error getting VMware creds", { params: { name }, error })
+    return {} as VMwareCreds
+  }
+}
