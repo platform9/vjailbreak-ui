@@ -4,6 +4,8 @@ interface FooterProps {
   cancelButtonLabel?: string
   submitButtonLabel?: string
   onClose: () => void
+  onSubmit: () => void
+  disableSubmit?: boolean
 }
 
 const StyledFooter = styled("div")(({ theme }) => ({
@@ -20,6 +22,8 @@ export default function Footer({
   cancelButtonLabel = "Cancel",
   submitButtonLabel = "Submit",
   onClose,
+  onSubmit,
+  disableSubmit = false,
 }: FooterProps) {
   return (
     <StyledFooter>
@@ -31,7 +35,13 @@ export default function Footer({
       >
         {cancelButtonLabel}
       </Button>
-      <Button type="submit" variant="contained" color="primary">
+      <Button
+        type="submit"
+        variant="contained"
+        color="primary"
+        onClick={onSubmit}
+        disabled={disableSubmit}
+      >
         {submitButtonLabel}
       </Button>
     </StyledFooter>

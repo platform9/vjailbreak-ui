@@ -295,6 +295,18 @@ export default function MigrationFormDrawer({
     }
   }
 
+  const vmwareCredsValidated =
+    vmWareCredsResource?.status?.vmwareValidationStatus === "Succeeded"
+  const openstackCredsValidated =
+    openstackCredsResource?.status?.openstackValidationStatus === "Succeeded"
+
+  const disableSubmit =
+    !vmwareCredsValidated ||
+    !openstackCredsValidated ||
+    isNilOrEmpty(params.vms) ||
+    isNilOrEmpty(params.networkMappings) ||
+    isNilOrEmpty(params.storageMappings)
+
   return (
     <StyledDrawer
       anchor="right"
@@ -304,12 +316,7 @@ export default function MigrationFormDrawer({
     >
       <Header title="Migration Form" />
       <DrawerContent>
-        <Box
-          component="form"
-          autoComplete="off"
-          onSubmit={handleSubmit}
-          sx={{ display: "grid", gap: 4 }}
-        >
+        <Box sx={{ display: "grid", gap: 4 }}>
           {/* Step 1 */}
           <SourceAndDestinationEnvStep
             params={params}
@@ -354,7 +361,12 @@ export default function MigrationFormDrawer({
           />
         </Box>
       </DrawerContent>
-      <Footer submitButtonLabel={"Start Migration"} onClose={onClose} />
+      <Footer
+        submitButtonLabel={"Start Migration"}
+        onClose={onClose}
+        onSubmit={handleSubmit}
+        disableSubmit={disableSubmit}
+      />
     </StyledDrawer>
   )
 }
