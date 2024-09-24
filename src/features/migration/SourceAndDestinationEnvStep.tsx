@@ -1,6 +1,8 @@
 import { Visibility, VisibilityOff } from "@mui/icons-material"
+import CheckIcon from "@mui/icons-material/Check"
 import {
   Box,
+  CircularProgress,
   FormControl,
   FormLabel,
   IconButton,
@@ -33,12 +35,20 @@ interface SourceAndDestinationEnvStepProps {
   params: { [key: string]: unknown }
   onChange: (id: string) => (value: unknown) => void
   errors: { [fieldId: string]: string }
+  vmwareCredsValidated?: boolean | null
+  validatingVmwareCreds?: boolean
+  validatingOpenstackCreds?: boolean
+  openstackCredsValidated?: boolean | null
 }
 
 export default function SourceAndDestinationEnvStep({
   params,
   onChange,
   errors,
+  validatingVmwareCreds = false,
+  validatingOpenstackCreds = false,
+  vmwareCredsValidated = null,
+  openstackCredsValidated = null,
 }: SourceAndDestinationEnvStepProps) {
   const [showPassword, setShowPassword] = useState(false)
   const [vmwareCreds, setVmwareCreds] = useState({
@@ -149,16 +159,53 @@ export default function SourceAndDestinationEnvStep({
               />
             </Fields>
           </Box>
-          {!!errors["vmwareCreds"] && (
-            <FormLabel error sx={{ mb: 1 }}>
-              {errors["vmwareCreds"]}
-            </FormLabel>
-          )}
+          <Box sx={{ display: "flex", gap: 2, mt: 1 }}>
+            {validatingVmwareCreds && (
+              <>
+                <CircularProgress size={24} />
+                <FormLabel sx={{ mb: 1 }}>Validating VMWare Creds...</FormLabel>
+              </>
+            )}
+            {vmwareCredsValidated && (
+              <>
+                <CheckIcon color="success" fontSize="small" />
+                <FormLabel sx={{ mb: 1 }}>VMWare Creds Validated</FormLabel>
+              </>
+            )}
+            {!!errors["vmwareCreds"] && (
+              <FormLabel error sx={{ mb: 1 }}>
+                {errors["vmwareCreds"]}
+              </FormLabel>
+            )}
+          </Box>
         </FormControl>
       </FieldsContainer>
       <FieldsContainer>
         <Typography variant="body1">Destination Platform</Typography>
-        <OpenstackRCFileUpload onChange={handleOpenstackCredsChange} />
+        <FormControl fullWidth error={!!errors["openstackCreds"]} required>
+          <OpenstackRCFileUpload onChange={handleOpenstackCredsChange} />
+          <Box sx={{ display: "flex", gap: 2, mt: 1 }}>
+            {validatingOpenstackCreds && (
+              <>
+                <CircularProgress size={24} />
+                <FormLabel sx={{ mb: 1 }}>
+                  Validating Openstack Creds...
+                </FormLabel>
+              </>
+            )}
+            {openstackCredsValidated && (
+              <>
+                <CheckIcon color="success" fontSize="small" />
+                <FormLabel sx={{ mb: 1 }}>Openstack Creds Validated</FormLabel>
+              </>
+            )}
+            {!!errors["openstackCreds"] && (
+              <FormLabel error sx={{ mb: 1 }}>
+                {errors["openstackCreds"]}
+              </FormLabel>
+            )}
+          </Box>
+        </FormControl>
       </FieldsContainer>
     </SourceAndDestinationStepContainer>
   )

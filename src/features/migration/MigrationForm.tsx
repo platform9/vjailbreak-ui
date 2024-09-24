@@ -66,6 +66,9 @@ export default function MigrationFormDrawer({
   const { params, getParamsUpdater } = useParams<FormValues>(defaultValues)
   const { params: errors, getParamsUpdater: getErrorsUpdater } =
     useParams<Errors>({})
+  const [validatingVmwareCreds, setValidatingVmwareCreds] = useState(false)
+  const [validatingOpenstackCreds, setValidatingOpenstackCreds] =
+    useState(false)
 
   // Migration JSON Objects
   const [vmWareCredsResource, setVmwareCredsResource] = useState<VMwareCreds>(
@@ -81,6 +84,7 @@ export default function MigrationFormDrawer({
 
     // Function to create the VMwareCreds object
     const createVmwareCredsResource = async () => {
+      setValidatingVmwareCreds(true)
       const response = await createVmwareCreds(params.vmwareCreds)
       setVmwareCredsResource(response)
     }
@@ -107,10 +111,12 @@ export default function MigrationFormDrawer({
           getErrorsUpdater("vmwareCreds")(
             resource.status?.vmwareValidationMessage
           )
+          setValidatingVmwareCreds(false)
         }
       },
       stopPollingCond: (creds) =>
         creds?.status?.vmwareValidationStatus !== undefined,
+      onSuccess: () => setValidatingVmwareCreds(false),
       pollingInterval: 5000,
     })
 
@@ -125,13 +131,14 @@ export default function MigrationFormDrawer({
   useEffect(() => {
     if (isNilOrEmpty(params.openstackCreds)) return
 
-    // Function to create the VMwareCreds object
+    // Function to create the OpenstackCreds object
     const createOpenstackCredsResource = async () => {
+      setValidatingOpenstackCreds(true)
       const response = await createOpenstackCreds(params.openstackCreds)
       setOpenstackCredsResource(response)
     }
 
-    // Reset the VMwareCreds object if the user changes the credentials
+    // Reset the OpenstackCreds object if the user changes the credentials
     setOpenstackCredsResource({} as OpenstackCreds)
 
     createOpenstackCredsResource()
@@ -153,10 +160,12 @@ export default function MigrationFormDrawer({
           getErrorsUpdater("openstackCreds")(
             resource.status?.openstackValidationMessage
           )
+          setValidatingOpenstackCreds(false)
         }
       },
       stopPollingCond: (creds) =>
         creds?.status?.openstackValidationStatus !== undefined,
+      onSuccess: () => setValidatingOpenstackCreds(false),
       pollingInterval: 5000,
     })
 
@@ -249,6 +258,16 @@ export default function MigrationFormDrawer({
             params={params}
             onChange={getParamsUpdater}
             errors={errors}
+            validatingVmwareCreds={validatingVmwareCreds}
+            validatingOpenstackCreds={validatingOpenstackCreds}
+            vmwareCredsValidated={
+              vmWareCredsResource?.status?.vmwareValidationStatus ===
+              "Succeeded"
+            }
+            openstackCredsValidated={
+              openstackCredsResource?.status?.openstackValidationStatus ===
+              "Succeeded"
+            }
           />
           {/* Step 2 */}
           <VmsSelectionStep
