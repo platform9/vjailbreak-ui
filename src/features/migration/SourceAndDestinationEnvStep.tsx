@@ -28,7 +28,8 @@ const FieldsContainer = styled("div")(({ theme }) => ({
 
 const Fields = styled("div")(() => ({
   display: "grid",
-  gridAutoFlow: "column",
+  gridTemplateColumns: "1fr 1fr", // Ensures equal column width for both input fields
+  gridGap: "16px", // Adds spacing between the columns
 }))
 
 interface SourceAndDestinationEnvStepProps {
@@ -52,6 +53,7 @@ export default function SourceAndDestinationEnvStep({
 }: SourceAndDestinationEnvStepProps) {
   const [showPassword, setShowPassword] = useState(false)
   const [vmwareCreds, setVmwareCreds] = useState({
+    vcenterHost: "",
     datacenter: "",
     username: "",
     password: "",
@@ -76,18 +78,18 @@ export default function SourceAndDestinationEnvStep({
   const debouncedOnChange = useCallback(
     debounce((creds) => {
       onChange("vmwareCreds")(creds) // Pass the validated creds to the parent component
-    }, 1000 * 2), // Debounce for 3 seconds
+    }, 1000 * 3), // Debounce for 3 seconds
     [onChange]
   )
 
   useEffect(() => {
     // Only call debouncedOnChange when all required fields are filled out
     if (
+      vmwareCreds.vcenterHost &&
       vmwareCreds.datacenter &&
       vmwareCreds.username &&
       vmwareCreds.password
     ) {
-      console.log("All fields are filled, calling debounced onChange")
       debouncedOnChange(vmwareCreds)
     }
 
@@ -108,17 +110,31 @@ export default function SourceAndDestinationEnvStep({
             }}
           >
             <Typography variant="body1">Source VMWare</Typography>
-            <TextField
-              id="datacenter"
-              label="vCenter Server"
-              variant="outlined"
-              value={params["datacenter"]}
-              onChange={(e) =>
-                handleVmwareCredsChange({ datacenter: e.target.value })
-              }
-              error={!!errors.sourceEnv}
-              required
-            />
+            <Fields>
+              <TextField
+                id="vcenterHost"
+                label="vCenter Server"
+                variant="outlined"
+                value={params["datacenter"]}
+                onChange={(e) =>
+                  handleVmwareCredsChange({ vcenterHost: e.target.value })
+                }
+                error={!!errors.sourceEnv}
+                required
+              />
+              <TextField
+                id="datacenter"
+                label="Datacenter Name"
+                variant="outlined"
+                value={params["datacenter"]}
+                onChange={(e) =>
+                  handleVmwareCredsChange({ datacenter: e.target.value })
+                }
+                error={!!errors.sourceEnv}
+                required
+              />
+            </Fields>
+
             <Fields>
               <TextField
                 id="username"

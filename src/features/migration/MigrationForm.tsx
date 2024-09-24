@@ -45,6 +45,7 @@ interface MigrationFormDrawerProps {
 
 interface FormValues extends Record<string, unknown> {
   vmwareCreds?: {
+    vcenterHost: string
     datacenter: string
     username: string
     password: string
@@ -97,8 +98,8 @@ export default function MigrationFormDrawer({
 
   useEffect(() => {
     if (
-      vmWareCredsResource?.metadata?.name === undefined ||
-      vmWareCredsResource?.status !== undefined
+      isNilOrEmpty(vmWareCredsResource) &&
+      vmWareCredsResource?.status === undefined
     )
       return
 
@@ -106,8 +107,12 @@ export default function MigrationFormDrawer({
       resource: vmWareCredsResource,
       getResourceFunc: getVmwareCreds,
       onUpdate: (resource) => {
-        setVmwareCredsResource(resource)
-        if (resource.status?.vmwareValidationStatus !== "Succeeded") {
+        const status = resource?.status?.vmwareValidationStatus
+        if (status === "Succeeded") {
+          getErrorsUpdater("vmwareCreds")("")
+          setVmwareCredsResource(resource)
+          setValidatingVmwareCreds(false)
+        } else if (!!status && status !== "Succeeded") {
           getErrorsUpdater("vmwareCreds")(
             resource.status?.vmwareValidationMessage
           )
@@ -117,6 +122,10 @@ export default function MigrationFormDrawer({
       stopPollingCond: (creds) =>
         creds?.status?.vmwareValidationStatus !== undefined,
       onSuccess: () => setValidatingVmwareCreds(false),
+      onError: (error) => {
+        getErrorsUpdater("vmwareCreds")(error)
+        setValidatingVmwareCreds(false)
+      },
       pollingInterval: 5000,
     })
 
@@ -146,8 +155,8 @@ export default function MigrationFormDrawer({
 
   useEffect(() => {
     if (
-      openstackCredsResource?.metadata?.name === undefined ||
-      openstackCredsResource?.status !== undefined
+      isNilOrEmpty(openstackCredsResource) &&
+      openstackCredsResource?.status === undefined
     )
       return
 
@@ -155,8 +164,12 @@ export default function MigrationFormDrawer({
       resource: openstackCredsResource,
       getResourceFunc: getOpenstackCreds,
       onUpdate: (resource) => {
-        setOpenstackCredsResource(resource)
-        if (resource.status?.openstackValidationStatus !== "Succeeded") {
+        const status = resource?.status?.openstackValidationStatus
+        if (status === "Succeeded") {
+          getErrorsUpdater("openstackCreds")("")
+          setOpenstackCredsResource(resource)
+          setValidatingOpenstackCreds(false)
+        } else if (!!status && status !== "Succeeded") {
           getErrorsUpdater("openstackCreds")(
             resource.status?.openstackValidationMessage
           )
@@ -166,6 +179,10 @@ export default function MigrationFormDrawer({
       stopPollingCond: (creds) =>
         creds?.status?.openstackValidationStatus !== undefined,
       onSuccess: () => setValidatingOpenstackCreds(false),
+      onError: (error) => {
+        getErrorsUpdater("openstackCreds")(error)
+        setValidatingOpenstackCreds(false)
+      },
       pollingInterval: 5000,
     })
 
@@ -210,9 +227,13 @@ export default function MigrationFormDrawer({
       resource: migrationTemplateResource,
       getResourceFunc: getMigrationTemplate,
       onUpdate: (resource) => {
+        getErrorsUpdater("vms")("")
         setMigrationTemplateResource(resource)
       },
       stopPollingCond: (template) => template?.status !== undefined,
+      onError: (error) => {
+        getErrorsUpdater("vms")(error)
+      },
       pollingInterval: 2000,
     })
 
@@ -235,8 +256,6 @@ export default function MigrationFormDrawer({
   }, [params.vms])
 
   const handleSubmit = () => {}
-
-  console.log(availableVmwareDatastores, availableVmwareNetworks)
 
   return (
     <StyledDrawer
@@ -274,6 +293,11 @@ export default function MigrationFormDrawer({
             vms={migrationTemplateResource?.status?.vmware}
             onChange={getParamsUpdater}
             error={errors["vms"]}
+            loadingVms={
+              !isNilOrEmpty(migrationTemplateResource) &&
+              migrationTemplateResource?.status === undefined &&
+              !!errors["vms"]
+            }
           />
           {/* Step 3 */}
           <NetworkAndStorageMappingStep

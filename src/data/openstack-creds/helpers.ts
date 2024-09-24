@@ -3,6 +3,7 @@ import { v4 as uuidv4 } from "uuid"
 export const createOpenstackCredsJson = (params) => {
   const {
     name,
+    namespace = "migration-system",
     OS_AUTH_URL,
     OS_DOMAIN_NAME,
     OS_USERNAME,
@@ -15,6 +16,7 @@ export const createOpenstackCredsJson = (params) => {
     kind: "OpenstackCreds",
     metadata: {
       name: name || uuidv4(),
+      namespace,
     },
     spec: {
       OS_AUTH_URL,

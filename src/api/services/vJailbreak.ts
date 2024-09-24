@@ -1,13 +1,13 @@
 import config from "app-config"
-import { omit } from "ramda"
-import { GetMigrationTemplatesList } from "src/data/migration-templates/model"
-import { GetOpenstackCredsList } from "src/data/openstack-creds/model"
 import {
-  getMigrationTemplate,
-  getOpenstackCred,
-  getVmwareCred,
-} from "src/data/testData"
-import { GetVMWareCredsList } from "src/data/vmware-creds/model"
+  GetMigrationTemplatesList,
+  MigrationTemplate,
+} from "src/data/migration-templates/model"
+import {
+  GetOpenstackCredsList,
+  OpenstackCreds,
+} from "src/data/openstack-creds/model"
+import { GetVMWareCredsList, VMwareCreds } from "src/data/vmware-creds/model"
 import ApiService from "./ApiService"
 
 class vJailbreak extends ApiService {
@@ -44,17 +44,14 @@ class vJailbreak extends ApiService {
     namespace = this.defaultNamespace
   ) => {
     const endpoint = `${this.baseEndpoint}/namespaces/${namespace}/openstackcreds/${openstackCredsName}`
-    // Test
-    const data = getOpenstackCred(true)
-    return data
-    // const response = await this.client.get<OpenstackCreds>({
-    //   endpoint,
-    //   options: {
-    //     clsName: this.getClassName(),
-    //     mthdName: "getOpenstackCredentials",
-    //   },
-    // })
-    // return response
+    const response = await this.client.get<OpenstackCreds>({
+      endpoint,
+      options: {
+        clsName: this.getClassName(),
+        mthdName: "getOpenstackCredentials",
+      },
+    })
+    return response
   }
 
   createOpenstackCredentials = async (
@@ -62,18 +59,15 @@ class vJailbreak extends ApiService {
     namespace = this.defaultNamespace
   ) => {
     const endpoint = `${this.baseEndpoint}/namespaces/${namespace}/openstackcreds`
-    // Test
-    const data = getOpenstackCred(true)
-    return omit(["status"], data)
-    // const response = await this.client.post<OpenstackCreds>({
-    //   endpoint,
-    //   body,
-    //   options: {
-    //     clsName: this.getClassName(),
-    //     mthdName: "createOpenstackCredentials",
-    //   },
-    // })
-    // return response
+    const response = await this.client.post<OpenstackCreds>({
+      endpoint,
+      body,
+      options: {
+        clsName: this.getClassName(),
+        mthdName: "createOpenstackCredentials",
+      },
+    })
+    return response
   }
 
   getVmwareCredentialsList = async (namespace = this.defaultNamespace) => {
@@ -95,33 +89,27 @@ class vJailbreak extends ApiService {
     namespace = this.defaultNamespace
   ) => {
     const endpoint = `${this.baseEndpoint}/namespaces/${namespace}/vmwarecreds/${vmwareCredsName}`
-    // Test
-    const data = getVmwareCred(true)
-    return data
-    // const response = await this.client.get<VMwareCreds>({
-    //   endpoint,
-    //   options: {
-    //     clsName: this.getClassName(),
-    //     mthdName: "getVmwareCredentials",
-    //   },
-    // })
-    // return response
+    const response = await this.client.get<VMwareCreds>({
+      endpoint,
+      options: {
+        clsName: this.getClassName(),
+        mthdName: "getVmwareCredentials",
+      },
+    })
+    return response
   }
 
   createVmwareCredentials = async (body, namespace = this.defaultNamespace) => {
     const endpoint = `${this.baseEndpoint}/namespaces/${namespace}/vmwarecreds`
-    // Test
-    const data = getVmwareCred(true)
-    return omit(["status"], data)
-    // const response = await this.client.post<VMwareCreds>({
-    //   endpoint,
-    //   body,
-    //   options: {
-    //     clsName: this.getClassName(),
-    //     mthdName: "createVmwareCredentials",
-    //   },
-    // })
-    // return response
+    const response = await this.client.post<VMwareCreds>({
+      endpoint,
+      body,
+      options: {
+        clsName: this.getClassName(),
+        mthdName: "createVmwareCredentials",
+      },
+    })
+    return response
   }
 
   getNetworkMapping = async (
@@ -224,34 +212,28 @@ class vJailbreak extends ApiService {
     templateName,
     namespace = this.defaultNamespace
   ) => {
-    // Test
-    const data = getMigrationTemplate()
-    return data
-    // const endpoint = `${this.baseEndpoint}/namespaces/${namespace}/migrationtemplates/${templateName}`
-    // const response = await this.client.get<MigrationTemplate>({
-    //   endpoint,
-    //   options: {
-    //     clsName: this.getClassName(),
-    //     mthdName: "getMigrationTemplate",
-    //   },
-    // })
-    // return response
+    const endpoint = `${this.baseEndpoint}/namespaces/${namespace}/migrationtemplates/${templateName}`
+    const response = await this.client.get<MigrationTemplate>({
+      endpoint,
+      options: {
+        clsName: this.getClassName(),
+        mthdName: "getMigrationTemplate",
+      },
+    })
+    return response
   }
 
   createMigrationTemplate = async (body, namespace = this.defaultNamespace) => {
-    // Test
-    const data = getMigrationTemplate()
-    return omit(["status"], data)
-    // const endpoint = `${this.baseEndpoint}/namespaces/${namespace}/migrationtemplates`
-    // const response = await this.client.post<MigrationTemplate>({
-    //   endpoint,
-    //   body,
-    //   options: {
-    //     clsName: this.getClassName(),
-    //     mthdName: "createMigrationTemplate",
-    //   },
-    // })
-    // return response
+    const endpoint = `${this.baseEndpoint}/namespaces/${namespace}/migrationtemplates`
+    const response = await this.client.post<MigrationTemplate>({
+      endpoint,
+      body,
+      options: {
+        clsName: this.getClassName(),
+        mthdName: "createMigrationTemplate",
+      },
+    })
+    return response
   }
 
   getMigrationPlan = async (planName, namespace = this.defaultNamespace) => {

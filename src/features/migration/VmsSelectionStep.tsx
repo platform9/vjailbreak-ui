@@ -1,28 +1,9 @@
-import { Box, FormControl, FormHelperText, Paper, styled } from "@mui/material"
-import {
-  DataGrid,
-  GridColDef,
-  GridRowSelectionModel,
-  GridToolbarQuickFilter,
-} from "@mui/x-data-grid"
+import { FormControl, FormHelperText, Paper, styled } from "@mui/material"
+import { DataGrid, GridColDef, GridRowSelectionModel } from "@mui/x-data-grid"
+import CustomLoadingOverlay from "src/components/grid/CustomLoadingOverlay"
+import CustomSearchToolbar from "src/components/grid/CustomSearchToolbar"
 import { VmData } from "src/data/migration-templates/model"
 import Step from "../../components/forms/Step"
-
-// Custom Toolbar with just the Quick Filter
-const CustomToolbar = () => {
-  return (
-    <Box
-      sx={{
-        p: 1,
-        display: "flex",
-        justifyContent: "flex-end",
-        alignItems: "center",
-      }}
-    >
-      <GridToolbarQuickFilter />
-    </Box>
-  )
-}
 
 const VmsSelectionStepContainer = styled("div")(({ theme }) => ({
   display: "grid",
@@ -44,12 +25,14 @@ interface VmsSelectionStepProps {
   vms: VmData[]
   onChange: (id: string) => (value: unknown) => void
   error: string
+  loadingVms?: boolean
 }
 
 export default function VmsSelectionStep({
   vms = [],
   onChange,
   error,
+  loadingVms = false,
 }: VmsSelectionStepProps) {
   const handleVmSelection = (selectedRowIds: GridRowSelectionModel) => {
     const selectedVms = vms.filter((vm) => selectedRowIds.includes(vm.name))
@@ -71,7 +54,13 @@ export default function VmsSelectionStep({
               rowHeight={35}
               onRowSelectionModelChange={handleVmSelection}
               getRowId={(row) => row.name}
-              slots={{ toolbar: CustomToolbar }}
+              slots={{
+                toolbar: CustomSearchToolbar,
+                loadingOverlay: () => (
+                  <CustomLoadingOverlay loadingMessage="Scanning for VMs" />
+                ),
+              }}
+              loading={loadingVms}
               checkboxSelection
               disableColumnMenu
               disableColumnResize
