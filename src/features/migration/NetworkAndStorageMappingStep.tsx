@@ -1,4 +1,5 @@
 import { FormControl, FormHelperText, styled } from "@mui/material"
+import { useEffect, useMemo } from "react"
 import ResourceMapping from "../../components/forms/ResourceMapping"
 import Step from "../../components/forms/Step"
 
@@ -42,6 +43,39 @@ export default function NetworkAndStorageMappingStep({
   networkMappingError,
   storageMappingError,
 }: NetworkAndStorageMappingStepProps) {
+  // Filter out any mappings that don't match the available networks/storage
+  const filteredNetworkMappings = useMemo(
+    () =>
+      (params.networkMappings || []).filter(
+        (mapping) =>
+          vmwareNetworks.includes(mapping.source) &&
+          openstackNetworks.includes(mapping.destination)
+      ),
+    [params.networkMappings, vmwareNetworks, openstackNetworks]
+  )
+
+  const filteredStorageMappings = useMemo(
+    () =>
+      (params.storageMappings || []).filter(
+        (mapping) =>
+          vmWareStorage.includes(mapping.source) &&
+          openstackStorage.includes(mapping.destination)
+      ),
+    [params.storageMappings, vmWareStorage, openstackStorage]
+  )
+
+  useEffect(() => {
+    if (filteredNetworkMappings.length !== params.networkMappings?.length) {
+      onChange("networkMappings")(filteredNetworkMappings)
+    }
+  }, [filteredNetworkMappings, onChange, params.networkMappings])
+
+  useEffect(() => {
+    if (filteredStorageMappings.length !== params.storageMappings?.length) {
+      onChange("storageMappings")(filteredStorageMappings)
+    }
+  }, [filteredStorageMappings, onChange, params.storageMappings])
+
   return (
     <VmsSelectionStepContainer>
       <Step stepNumber="3" label="Network and Storage Mapping" />
