@@ -49,6 +49,8 @@ class ApiClient {
       },
     })
 
+    this.token = import.meta.env.VITE_API_TOKEN
+
     // Add API Services here
     this.vjailbreak = this.addApiService(new vJailbreakService(this))
   }
@@ -62,9 +64,12 @@ class ApiClient {
     this.token = token
   }
 
+  getToken = () => {
+    return this.token
+  }
+
   getAuthHeaders = () => {
     if (!this.token) {
-      //   console.warn('Auth token not initialized')
       return {}
     }
 

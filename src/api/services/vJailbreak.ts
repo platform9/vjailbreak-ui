@@ -32,6 +32,14 @@ class vJailbreak extends ApiService {
   }
 
   get baseEndpoint() {
+    if (
+      import.meta.env.MODE === "production" &&
+      !!import.meta.env.VITE_API_PORT
+    ) {
+      return `${
+        import.meta.env.VITE_API_PORT
+      }/apis/vjailbreak.k8s.pf9.io/v1alpha1`
+    }
     return "/apis/vjailbreak.k8s.pf9.io/v1alpha1"
   }
 
