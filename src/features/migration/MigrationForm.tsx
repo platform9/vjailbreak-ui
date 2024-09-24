@@ -98,8 +98,8 @@ export default function MigrationFormDrawer({
 
   useEffect(() => {
     if (
-      isNilOrEmpty(vmWareCredsResource) &&
-      vmWareCredsResource?.status === undefined
+      isNilOrEmpty(vmWareCredsResource) ||
+      !isNilOrEmpty(vmWareCredsResource?.status)
     )
       return
 
@@ -155,8 +155,8 @@ export default function MigrationFormDrawer({
 
   useEffect(() => {
     if (
-      isNilOrEmpty(openstackCredsResource) &&
-      openstackCredsResource?.status === undefined
+      isNilOrEmpty(openstackCredsResource) ||
+      !isNilOrEmpty(openstackCredsResource?.status)
     )
       return
 
@@ -218,8 +218,8 @@ export default function MigrationFormDrawer({
 
   useEffect(() => {
     if (
-      migrationTemplateResource?.metadata?.name === undefined ||
-      migrationTemplateResource?.status !== undefined
+      isNilOrEmpty(migrationTemplateResource) ||
+      !isNilOrEmpty(migrationTemplateResource.status)
     )
       return
 
