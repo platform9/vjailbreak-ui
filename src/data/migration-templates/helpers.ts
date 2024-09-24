@@ -1,10 +1,10 @@
 import { v4 as uuidv4 } from "uuid"
 
-export const createMigrationTemplateJson = async (params) => {
+export const createMigrationTemplateJson = (params) => {
   const {
     name,
-    networkMapping,
-    storageMapping,
+    networkMapping = "",
+    storageMapping = "",
     virtioWinDriver,
     osType,
     datacenter,

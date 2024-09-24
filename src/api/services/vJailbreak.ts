@@ -225,7 +225,6 @@ class vJailbreak extends ApiService {
 
   createMigrationTemplate = async (body, namespace = this.defaultNamespace) => {
     const endpoint = `${this.baseEndpoint}/namespaces/${namespace}/migrationtemplates`
-    console.log("body2", body)
     const response = await this.client.post<MigrationTemplate>({
       endpoint,
       body,

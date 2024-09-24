@@ -201,7 +201,7 @@ export default function MigrationFormDrawer({
       return
     const createMigrationTemplateResource = async () => {
       const response = await createMigrationTemplate({
-        name: params.vmwareCreds?.datacenter,
+        datacenter: params.vmwareCreds?.datacenter,
         vmwareRef: vmWareCredsResource.metadata.name,
         openstackRef: openstackCredsResource.metadata.name,
       })
@@ -296,7 +296,7 @@ export default function MigrationFormDrawer({
             loadingVms={
               !isNilOrEmpty(migrationTemplateResource) &&
               migrationTemplateResource?.status === undefined &&
-              !!errors["vms"]
+              !errors["vms"]
             }
           />
           {/* Step 3 */}

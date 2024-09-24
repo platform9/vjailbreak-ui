@@ -23,7 +23,6 @@ export const createMigrationTemplate = async (
   params
 ): Promise<MigrationTemplate> => {
   const body = createMigrationTemplateJson(params)
-  console.log("body", body)
   try {
     const data = await vjailbreak.createMigrationTemplate(body)
     return data
