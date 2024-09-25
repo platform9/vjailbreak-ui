@@ -2,8 +2,11 @@ import CheckCircleOutlineIcon from "@mui/icons-material/CheckCircleOutline"
 import ErrorOutlineIcon from "@mui/icons-material/ErrorOutline"
 import { Box, CircularProgress, Paper, Typography } from "@mui/material"
 import { DataGrid, GridColDef } from "@mui/x-data-grid"
+import { useEffect, useState } from "react"
 import CustomSearchToolbar from "src/components/grid/CustomSearchToolbar"
+import { getMigrationsList } from "src/data/migrations/actions"
 import { Migration } from "src/data/migrations/model"
+import { useInterval } from "src/hooks/useInterval"
 
 const columns: GridColDef[] = [
   {
@@ -47,11 +50,22 @@ const columns: GridColDef[] = [
 
 const paginationModel = { page: 0, pageSize: 25 }
 
-interface DashboardProps {
-  migrations: Migration[]
-}
+export default function Dashboard() {
+  const [migrations, setMigrations] = useState<Migration[]>([])
 
-export default function Dashboard({ migrations = [] }: DashboardProps) {
+  const getMigrations = async () => {
+    const migrations = await getMigrationsList()
+    setMigrations(migrations)
+  }
+
+  useEffect(() => {
+    getMigrations()
+  }, [])
+
+  useInterval(() => {
+    getMigrations()
+  }, 1000 * 20)
+
   return (
     <Paper sx={{ margin: 4 }}>
       <DataGrid

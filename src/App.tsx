@@ -37,6 +37,8 @@ function App() {
       return
     } else if (migrations.length === 0) {
       navigate("/onboarding")
+    } else {
+      navigate("/dashboard")
     }
   }, [migrations, navigate])
 
@@ -45,10 +47,8 @@ function App() {
       <AppBar setOpenMigrationForm={setOpenMigrationForm} />
       <AppFrame>
         <Routes>
-          <Route
-            path="/"
-            element={<Dashboard migrations={migrations || []} />}
-          />
+          <Route path="/" element={<Dashboard />} />
+          <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/onboarding" element={<Onboarding />} />
         </Routes>
         {openMigrationForm && (
