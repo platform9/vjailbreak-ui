@@ -1,12 +1,21 @@
 import CheckCircleOutlineIcon from "@mui/icons-material/CheckCircleOutline"
 import ErrorOutlineIcon from "@mui/icons-material/ErrorOutline"
-import { Box, CircularProgress, Paper, Typography } from "@mui/material"
+import { Box, CircularProgress, Paper, styled, Typography } from "@mui/material"
 import { DataGrid, GridColDef } from "@mui/x-data-grid"
 import { useEffect, useState } from "react"
 import CustomSearchToolbar from "src/components/grid/CustomSearchToolbar"
 import { getMigrationsList } from "src/data/migrations/actions"
 import { Migration } from "src/data/migrations/model"
 import { useInterval } from "src/hooks/useInterval"
+
+const DashboardContainer = styled("div")({
+  // display: "flex",
+  // justifyContent: "center",
+  // alignItems: "center",
+  // height: "100%",
+  // width: "100%",
+  marginTop: "40px",
+})
 
 const columns: GridColDef[] = [
   {
@@ -67,18 +76,20 @@ export default function Dashboard() {
   }, 1000 * 20)
 
   return (
-    <Paper sx={{ margin: 4 }}>
-      <DataGrid
-        rows={migrations}
-        columns={columns}
-        initialState={{ pagination: { paginationModel } }}
-        pageSizeOptions={[25, 50, 100]}
-        localeText={{ noRowsLabel: "No Migrations Available" }}
-        getRowId={(row) => row.metadata?.name}
-        slots={{
-          toolbar: () => <CustomSearchToolbar title="Migrations" />,
-        }}
-      />
-    </Paper>
+    <DashboardContainer>
+      <Paper sx={{ margin: 4 }}>
+        <DataGrid
+          rows={migrations}
+          columns={columns}
+          initialState={{ pagination: { paginationModel } }}
+          pageSizeOptions={[25, 50, 100]}
+          localeText={{ noRowsLabel: "No Migrations Available" }}
+          getRowId={(row) => row.metadata?.name}
+          slots={{
+            toolbar: () => <CustomSearchToolbar title="Migrations" />,
+          }}
+        />
+      </Paper>
+    </DashboardContainer>
   )
 }

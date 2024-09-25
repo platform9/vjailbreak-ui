@@ -10,12 +10,22 @@ import MigrationFormDrawer from "./features/migration/MigrationForm"
 import Dashboard from "./pages/dashboard/Dashboard"
 import Onboarding from "./pages/onboarding/Onboarding"
 
-const AppFrame = styled("div")(({ theme }) => ({
-  margin: "0 auto",
+const AppFrame = styled("div")(() => ({
+  position: "relative",
+  display: "grid",
+  width: "100vw",
+  height: "100vh",
+  maxWidth: "100vw",
+  maxHeight: "100vh",
+  gridTemplateRows: "auto 1fr",
+}))
+
+const AppContent = styled("div")(({ theme }) => ({
   width: "100%",
   height: "100%",
   [theme.breakpoints.up("lg")]: {
     maxWidth: "1600px",
+    margin: "0 auto",
   },
 }))
 
@@ -43,22 +53,22 @@ function App() {
   }, [migrations, navigate])
 
   return (
-    <div>
+    <AppFrame>
       <AppBar setOpenMigrationForm={setOpenMigrationForm} />
-      <AppFrame>
-        <Routes>
-          <Route path="/" element={<Dashboard />} />
-          <Route path="/dashboard" element={<Dashboard />} />
-          <Route path="/onboarding" element={<Onboarding />} />
-        </Routes>
+      <AppContent>
         {openMigrationForm && (
           <MigrationFormDrawer
             open
             onClose={() => setOpenMigrationForm(false)}
           />
         )}
-      </AppFrame>
-    </div>
+        <Routes>
+          <Route path="/" element={<Dashboard />} />
+          <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/onboarding" element={<Onboarding />} />
+        </Routes>
+      </AppContent>
+    </AppFrame>
   )
 }
 
