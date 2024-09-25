@@ -1,3 +1,4 @@
+import { Typography } from "@mui/material"
 import AppBar from "@mui/material/AppBar"
 import Box from "@mui/material/Box"
 import Button from "@mui/material/Button"
@@ -8,6 +9,7 @@ export default function ButtonAppBar({ setOpenMigrationForm }) {
     <Box>
       <AppBar position="static" color="transparent">
         <Toolbar>
+          <Typography variant="h3">vJailbreak</Typography>
           <Button
             size="large"
             onClick={() => setOpenMigrationForm(true)}

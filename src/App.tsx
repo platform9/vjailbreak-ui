@@ -40,16 +40,15 @@ function App() {
     }
   }, [migrations, navigate])
 
-  if (migrations === null) {
-    return <span>Loading app...</span>
-  }
-
   return (
     <div>
       <AppBar setOpenMigrationForm={setOpenMigrationForm} />
       <AppFrame>
         <Routes>
-          <Route path="/" element={<Dashboard migrations={migrations} />} />
+          <Route
+            path="/"
+            element={<Dashboard migrations={migrations || []} />}
+          />
           <Route path="/onboarding" element={<Onboarding />} />
         </Routes>
         {openMigrationForm && (
