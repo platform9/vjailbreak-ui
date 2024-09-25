@@ -6,6 +6,7 @@ import {
   GetMigrationTemplatesList,
   MigrationTemplate,
 } from "src/data/migration-templates/model"
+import { GetMigrationsList, Migration } from "src/data/migrations/model"
 import {
   GetNetworkMappingsList,
   NetworkMapping,
@@ -307,7 +308,7 @@ class vJailbreak extends ApiService {
 
   getMigration = async (migrationName, namespace = this.defaultNamespace) => {
     const endpoint = `${this.baseEndpoint}/namespaces/${namespace}/migrations/${migrationName}`
-    const response = await this.client.get({
+    const response = await this.client.get<Migration>({
       endpoint,
       options: {
         clsName: this.getClassName(),
@@ -319,7 +320,7 @@ class vJailbreak extends ApiService {
 
   getMigrationList = async (namespace = this.defaultNamespace) => {
     const endpoint = `${this.baseEndpoint}/namespaces/${namespace}/migrations`
-    const response = await this.client.get({
+    const response = await this.client.get<GetMigrationsList>({
       endpoint,
       options: {
         clsName: this.getClassName(),
