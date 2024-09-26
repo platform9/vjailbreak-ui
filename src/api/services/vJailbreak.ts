@@ -318,7 +318,7 @@ class vJailbreak extends ApiService {
   }
 
   getMigrationList = async (
-    migrationPlanName,
+    migrationPlanName = undefined,
     namespace = this.defaultNamespace
   ) => {
     const endpoint = `${this.baseEndpoint}/namespaces/${namespace}/migrations`
