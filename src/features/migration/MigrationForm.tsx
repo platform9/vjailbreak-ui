@@ -2,7 +2,6 @@ import { Box, Drawer, styled } from "@mui/material"
 import { flatten, uniq } from "ramda"
 import { useEffect, useMemo, useState } from "react"
 import { useNavigate } from "react-router-dom"
-import { createMigrationPlan } from "src/data/migration-plan/actions"
 import {
   createMigrationTemplate,
   getMigrationTemplate,
@@ -286,20 +285,32 @@ export default function MigrationFormDrawer({
       }
     )
 
-    // Create MigrationPlan Resource
-    const vmsToMigrate = (params.vms || []).map((vm) => vm.name)
-    const migrationPlanResource = await createMigrationPlan({
-      migrationTemplateName: updatedMigrationTemplateResource?.metadata?.name,
-      virtualmachines: vmsToMigrate,
+    console.log("MigrationTemplate updated with these params", {
+      spec: {
+        networkMapping: networkMappingsResource.metadata.name,
+        storageMapping: storageMappingsResource.metadata.name,
+      },
     })
 
-    if (!isNilOrEmpty(migrationPlanResource)) {
-      if (reloadMigrations) {
-        reloadMigrations()
-      }
-      navigate("/dashboard")
-      onClose()
-    }
+    console.log(
+      "Updated MigrationTemplate Resource",
+      updatedMigrationTemplateResource
+    )
+
+    // // Create MigrationPlan Resource
+    // const vmsToMigrate = (params.vms || []).map((vm) => vm.name)
+    // const migrationPlanResource = await createMigrationPlan({
+    //   migrationTemplateName: updatedMigrationTemplateResource?.metadata?.name,
+    //   virtualmachines: vmsToMigrate,
+    // })
+
+    // if (!isNilOrEmpty(migrationPlanResource)) {
+    //   if (reloadMigrations) {
+    //     reloadMigrations()
+    //   }
+    //   navigate("/dashboard")
+    //   onClose()
+    // }
   }
 
   const vmwareCredsValidated =
