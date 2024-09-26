@@ -46,8 +46,6 @@ function App() {
     }
   }
 
-  console.log("hello")
-
   useEffect(() => {
     getMigrations()
   }, [])
