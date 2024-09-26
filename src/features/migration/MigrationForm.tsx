@@ -300,12 +300,12 @@ export default function MigrationFormDrawer({
   }
 
   const closeAndRedirectToDashboard = useCallback(() => {
+    console.log('Navigating to "/dashboard"')
+    navigate("/dashboard")
     if (reloadMigrations) {
-      console.log("Reloading migrations")
+      console.log("Reloading migrations in dashboard page")
       reloadMigrations()
     }
-    console.log("Navigating to dashboard")
-    navigate("/dashboard")
     onClose()
   }, [reloadMigrations, navigate, onClose])
 
@@ -324,7 +324,7 @@ export default function MigrationFormDrawer({
         migrationPlanResource.metadata.name
       )
       if (migrations.length > 0) {
-        console.log("Migrations detected")
+        console.log("Migrations detected. Polling stopped.")
         // If migrations are detected, stop polling and trigger the next steps
         closeAndRedirectToDashboard()
       } else {
@@ -338,6 +338,7 @@ export default function MigrationFormDrawer({
 
     // Cleanup function to stop polling if the component unmounts
     return () => {
+      console.log("Clearing polling", pollingTimeout)
       clearTimeout(pollingTimeout) // Properly clear the timeout using the ID
     }
   }, [
