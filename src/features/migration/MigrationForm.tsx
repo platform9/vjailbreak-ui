@@ -1,14 +1,16 @@
 import { Box, Drawer, styled } from "@mui/material"
 import { flatten, uniq } from "ramda"
-import { useEffect, useMemo, useState } from "react"
+import { useCallback, useEffect, useMemo, useState } from "react"
 import { useNavigate } from "react-router-dom"
 import { createMigrationPlan } from "src/data/migration-plan/actions"
+import { MigrationPlan } from "src/data/migration-plan/model"
 import {
   createMigrationTemplate,
   getMigrationTemplate,
   updateMigrationTemplate,
 } from "src/data/migration-templates/action"
 import { MigrationTemplate, VmData } from "src/data/migration-templates/model"
+import { getMigrationsList } from "src/data/migrations/actions"
 import { createNetworkMapping } from "src/data/network-mappings/actions"
 import {
   createOpenstackCreds,
@@ -87,6 +89,8 @@ export default function MigrationFormDrawer({
     useState<OpenstackCreds>({} as OpenstackCreds)
   const [migrationTemplateResource, setMigrationTemplateResource] =
     useState<MigrationTemplate>({} as MigrationTemplate)
+  const [migrationPlanResource, setMigrationPlanResource] =
+    useState<MigrationPlan>({} as MigrationPlan)
 
   useEffect(() => {
     if (isNilOrEmpty(params.vmwareCreds)) return
@@ -292,15 +296,57 @@ export default function MigrationFormDrawer({
       migrationTemplateName: updatedMigrationTemplateResource?.metadata?.name,
       virtualmachines: vmsToMigrate,
     })
-
-    if (!isNilOrEmpty(migrationPlanResource)) {
-      if (reloadMigrations) {
-        reloadMigrations()
-      }
-      navigate("/dashboard")
-      onClose()
-    }
+    setMigrationPlanResource(migrationPlanResource)
   }
+
+  const closeAndRedirectToDashboard = useCallback(() => {
+    if (reloadMigrations) {
+      console.log("Reloading migrations")
+      reloadMigrations()
+    }
+    console.log("Navigating to dashboard")
+    navigate("/dashboard")
+    onClose()
+  }, [reloadMigrations, navigate, onClose])
+
+  useEffect(() => {
+    if (
+      isNilOrEmpty(migrationPlanResource) ||
+      !migrationPlanResource.metadata?.name
+    )
+      return
+
+    let pollingTimeout: NodeJS.Timeout // Declare a variable to store the timeout ID
+
+    const pollForMigrations = async () => {
+      console.log("Polling for migrations")
+      const migrations = await getMigrationsList(
+        migrationPlanResource.metadata.name
+      )
+      if (migrations.length > 0) {
+        console.log("Migrations detected")
+        // If migrations are detected, stop polling and trigger the next steps
+        closeAndRedirectToDashboard()
+      } else {
+        // If no migrations are found, continue polling
+        pollingTimeout = setTimeout(pollForMigrations, 5000)
+      }
+    }
+
+    // Start polling for migrations
+    pollForMigrations()
+
+    // Cleanup function to stop polling if the component unmounts
+    return () => {
+      clearTimeout(pollingTimeout) // Properly clear the timeout using the ID
+    }
+  }, [
+    migrationPlanResource,
+    reloadMigrations,
+    navigate,
+    onClose,
+    closeAndRedirectToDashboard,
+  ])
 
   const vmwareCredsValidated =
     vmWareCredsResource?.status?.vmwareValidationStatus === "Succeeded"
