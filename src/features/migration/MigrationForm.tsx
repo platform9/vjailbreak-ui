@@ -32,8 +32,6 @@ import NetworkAndStorageMappingStep from "./NetworkAndStorageMappingStep"
 import SourceAndDestinationEnvStep from "./SourceAndDestinationEnvStep"
 import VmsSelectionStep from "./VmsSelectionStep"
 
-// const { vjailbreak } = ApiClient.getInstance()
-
 const StyledDrawer = styled(Drawer)(() => ({
   "& .MuiDrawer-paper": {
     display: "grid",
@@ -302,51 +300,10 @@ export default function MigrationFormDrawer({
   }
 
   const closeAndRedirectToDashboard = useCallback(() => {
-    console.log('Navigating to "/dashboard"')
+    navigate("/dashboard")
     window.location.reload()
     onClose()
-    // navigate("/dashboard")
-    // if (reloadMigrations) {
-    //   console.log("Reloading migrations in dashboard page")
-    //   reloadMigrations()
-    // }
-  }, [onClose])
-
-  // const testHandleSubmit = async () => {
-  //   // Create NetworkMapping Resource
-  //   const networkMappingsResource = await createNetworkMapping({
-  //     networkMappings: params.networkMappings,
-  //   })
-
-  //   // Create StorageMapping Resource
-  //   const storageMappingsResource = await createStorageMapping({
-  //     storageMappings: params.storageMappings,
-  //   })
-
-  //   //Update MigrationTemplate with NetworkMapping and StorageMapping resource names
-  //   const templateName = migrationTemplateResource?.metadata?.name
-  //   const updatedMigrationTemplateResource = await updateMigrationTemplate(
-  //     templateName,
-  //     {
-  //       spec: {
-  //         networkMapping: networkMappingsResource.metadata.name,
-  //         storageMapping: storageMappingsResource.metadata.name,
-  //       },
-  //     }
-  //   )
-
-  //   // Create MigrationPlan Resource
-  //   const vmsToMigrate = (params.vms || []).map((vm) => vm.name)
-  //   const migrationPlanName = "kimtest8"
-  //   const migrationPlanResource = await createMigrationPlan({
-  //     name: migrationPlanName,
-  //     migrationTemplateName: migrationPlanName,
-  //     virtualmachines: [migrationPlanName],
-  //   })
-  //   const migration = await vjailbreak.createMigration(migrationPlanName)
-  //   console.log("migration created", migration)
-  //   setMigrationPlanResource(migrationPlanResource)
-  // }
+  }, [navigate, onClose])
 
   useEffect(() => {
     if (
@@ -459,7 +416,6 @@ export default function MigrationFormDrawer({
         onClose={onClose}
         onSubmit={handleSubmit}
         disableSubmit={disableSubmit}
-        // onSubmit={testHandleSubmit}
       />
     </StyledDrawer>
   )

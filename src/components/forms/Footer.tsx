@@ -1,3 +1,4 @@
+import LoadingButton from "@mui/lab/LoadingButton"
 import { Button, styled } from "@mui/material"
 
 interface FooterProps {
@@ -6,6 +7,7 @@ interface FooterProps {
   onClose: () => void
   onSubmit: () => void
   disableSubmit?: boolean
+  submitting?: boolean
 }
 
 const StyledFooter = styled("div")(({ theme }) => ({
@@ -23,6 +25,7 @@ export default function Footer({
   submitButtonLabel = "Submit",
   onClose,
   onSubmit,
+  submitting = false,
   disableSubmit = false,
 }: FooterProps) {
   return (
@@ -35,15 +38,17 @@ export default function Footer({
       >
         {cancelButtonLabel}
       </Button>
-      <Button
+      <LoadingButton
+        loading={submitting}
+        loadingPosition="start"
         type="submit"
         variant="contained"
         color="primary"
+        disabled={disableSubmit || submitting}
         onClick={onSubmit}
-        disabled={disableSubmit}
       >
-        {submitButtonLabel}
-      </Button>
+        {submitting ? "Submitting" : submitButtonLabel}
+      </LoadingButton>
     </StyledFooter>
   )
 }

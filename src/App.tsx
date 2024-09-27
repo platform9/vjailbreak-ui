@@ -1,6 +1,6 @@
 import { styled } from "@mui/material"
 import { useEffect, useState } from "react"
-import { Route, Routes, useNavigate } from "react-router-dom"
+import { Route, Routes, useLocation, useNavigate } from "react-router-dom"
 import ApiClient from "./api/ApiClient"
 import "./App.css"
 import "./assets/reset.css"
@@ -33,6 +33,7 @@ const { vjailbreak } = ApiClient.getInstance()
 
 function App() {
   const navigate = useNavigate()
+  const location = useLocation()
   const [migrations, setMigrations] = useState<Migration[] | null>(null)
   const [openMigrationForm, setOpenMigrationForm] = useState(false)
 
@@ -60,7 +61,7 @@ function App() {
     }
   }, [migrations, navigate])
 
-  const isOnboardingPage = window.location.pathname === "/onboarding"
+  const isOnboardingPage = location.pathname === "/onboarding"
 
   return (
     <AppFrame>
@@ -68,6 +69,7 @@ function App() {
         setOpenMigrationForm={setOpenMigrationForm}
         hide={isOnboardingPage}
       />
+
       <AppContent>
         {openMigrationForm && (
           <MigrationFormDrawer
@@ -77,7 +79,7 @@ function App() {
           />
         )}
         <Routes>
-          <Route path="/" element={<Dashboard />} />
+          <Route path="/" element={<div></div>} />
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/onboarding" element={<Onboarding />} />
         </Routes>
