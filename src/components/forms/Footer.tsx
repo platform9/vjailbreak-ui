@@ -1,5 +1,4 @@
-import LoadingButton from "@mui/lab/LoadingButton"
-import { Button, styled } from "@mui/material"
+import { Button, CircularProgress, styled } from "@mui/material"
 
 interface FooterProps {
   cancelButtonLabel?: string
@@ -38,17 +37,16 @@ export default function Footer({
       >
         {cancelButtonLabel}
       </Button>
-      <LoadingButton
-        loading={submitting}
-        loadingPosition="start"
+      <Button
         type="submit"
         variant="contained"
         color="primary"
-        disabled={disableSubmit || submitting}
         onClick={onSubmit}
+        disabled={disableSubmit || submitting}
       >
+        {submitting && <CircularProgress size={20} sx={{ marginRight: 2 }} />}
         {submitting ? "Submitting" : submitButtonLabel}
-      </LoadingButton>
+      </Button>
     </StyledFooter>
   )
 }

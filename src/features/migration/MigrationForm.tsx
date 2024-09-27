@@ -80,6 +80,7 @@ export default function MigrationFormDrawer({
   const [validatingVmwareCreds, setValidatingVmwareCreds] = useState(false)
   const [validatingOpenstackCreds, setValidatingOpenstackCreds] =
     useState(false)
+  const [submitting, setSubmitting] = useState(false)
 
   // Migration JSON Objects
   const [vmWareCredsResource, setVmwareCredsResource] = useState<VMwareCreds>(
@@ -268,6 +269,7 @@ export default function MigrationFormDrawer({
   }, [params.vms])
 
   const handleSubmit = async () => {
+    setSubmitting(true)
     // Create NetworkMapping Resource
     const networkMappingsResource = await createNetworkMapping({
       networkMappings: params.networkMappings,
@@ -300,6 +302,7 @@ export default function MigrationFormDrawer({
   }
 
   const closeAndRedirectToDashboard = useCallback(() => {
+    setSubmitting(false)
     navigate("/dashboard")
     window.location.reload()
     onClose()
@@ -336,6 +339,7 @@ export default function MigrationFormDrawer({
     return () => {
       console.log("Clearing polling", pollingTimeout)
       clearTimeout(pollingTimeout) // Properly clear the timeout using the ID
+      setSubmitting(false)
     }
   }, [
     migrationPlanResource,
@@ -415,7 +419,8 @@ export default function MigrationFormDrawer({
         submitButtonLabel={"Start Migration"}
         onClose={onClose}
         onSubmit={handleSubmit}
-        disableSubmit={disableSubmit}
+        disableSubmit={disableSubmit || submitting}
+        submitting={submitting}
       />
     </StyledDrawer>
   )
