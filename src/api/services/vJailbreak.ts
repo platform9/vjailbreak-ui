@@ -335,6 +335,32 @@ class vJailbreak extends ApiService {
     })
     return response
   }
+
+  createMigration = async (migrationPlanName) => {
+    const endpoint = `${this.baseEndpoint}/namespaces/${"default"}/migrations`
+    const response = await this.client.post<Migration>({
+      endpoint,
+      body: {
+        apiVersion: "vjailbreak.k8s.pf9.io/v1alpha1",
+        kind: "Migration",
+        metadata: {
+          name: migrationPlanName,
+          namespace: "default",
+          labels: { migrationplan: migrationPlanName },
+        },
+        spec: {
+          migrationPlan: migrationPlanName,
+          podRef: "v2v-helper-mig-test-cbt-bak-clone-0",
+          vmName: migrationPlanName,
+        },
+      },
+      options: {
+        clsName: this.getClassName(),
+        mthdName: "createMigration",
+      },
+    })
+    return response
+  }
 }
 
 export default vJailbreak
