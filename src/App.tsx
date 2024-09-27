@@ -61,14 +61,12 @@ function App() {
     }
   }, [migrations, navigate])
 
-  const isOnboardingPage = location.pathname === "/onboarding"
+  const hideAppbar =
+    location.pathname === "/onboarding" || location.pathname === "/"
 
   return (
     <AppFrame>
-      <AppBar
-        setOpenMigrationForm={setOpenMigrationForm}
-        hide={isOnboardingPage}
-      />
+      <AppBar setOpenMigrationForm={setOpenMigrationForm} hide={hideAppbar} />
 
       <AppContent>
         {openMigrationForm && (
